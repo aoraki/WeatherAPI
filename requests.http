@@ -1,0 +1,25 @@
+### Get Health
+GET http://localhost:8080/actuator/health
+Content-Type: application/json
+
+### Retrieve Stats
+POST http://localhost:8080/v1/weather/stats
+Content-Type: application/json
+
+{
+    "sensorIds" : [1],
+    "metrics" : ["TEMP"],
+    "statType" : "MIN",
+    "startDate" : "2023-06-01",
+    "endDate" : "2023-06-08"
+}
+
+
+### Submit Metrics
+POST http://localhost:8080/v1/weather/metrics
+Content-Type: application/json
+
+{
+  "sensorId" : 1,
+  "metrics" : [{"metricName" : "TEMP", "metricValue" : 20.0}, {"metricName" : "WIND", "metricValue" : 6.0}]
+}
