@@ -129,6 +129,12 @@ public class WeatherControllerTest {
     }
 
     @Test
+    void getSamplesBySampleIBadRequest() throws Exception {
+        mockMvc.perform(get("/v1/weather/metrics/hello"))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void createSampleNoSampleIdBadRequest() throws Exception {
         final String jsonPayload = "{\"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(post("/v1/weather/metrics")
@@ -453,6 +459,12 @@ public class WeatherControllerTest {
         given(metricsService.deleteSample(123L)).willReturn(true);
         mockMvc.perform(delete("/v1/weather/metrics/{sampleId}", 123L))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteSampleBadRequest() throws Exception {
+        mockMvc.perform(delete("/v1/weather/metrics/true"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
