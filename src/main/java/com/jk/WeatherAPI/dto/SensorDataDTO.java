@@ -1,38 +1,33 @@
 package com.jk.WeatherAPI.dto;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import java.util.List;
 
 public class SensorDataDTO {
-    private Long sensorId;
-    private List<MetricDTO> metrics;
+    @NotNull
+    public final Long sampleId;
 
-    public SensorDataDTO() {
-    }
+    @NotNull
+    public final Long sensorId;
 
-    public SensorDataDTO(Long sensorId, List<MetricDTO> metrics) {
+    @Valid
+    @NotEmpty
+    public final List<@Valid MetricDTO> metrics;
+
+    public SensorDataDTO(final Long sampleId, final Long sensorId, final List<MetricDTO> metrics) {
+        this.sampleId = sampleId;
         this.sensorId = sensorId;
-        this.metrics = metrics;
-    }
-
-    public Long getSensorId() {
-        return sensorId;
-    }
-
-    public void setSensorId(Long sensorId) {
-        this.sensorId = sensorId;
-    }
-
-    public List<MetricDTO> getMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(List<MetricDTO> metrics) {
         this.metrics = metrics;
     }
 
     @Override
     public String toString() {
         return "SensorDataDTO{" +
+                "sampleId=" + sampleId +
                 "sensorId=" + sensorId +
                 ", metrics=" + metrics +
                 '}';

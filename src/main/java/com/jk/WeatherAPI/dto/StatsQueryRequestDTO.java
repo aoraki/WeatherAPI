@@ -6,61 +6,20 @@ import com.jk.WeatherAPI.dto.enums.StatType;
 import java.util.List;
 
 public class StatsQueryRequestDTO {
-    private List<Long> sensorIds;
-    private List<MetricType> metrics;
-    private StatType statType;
-    private String startDate;
-    private String endDate;
+    public final List<Long> sensorIds;
+    public final List<MetricType> metrics;
+    public final StatType statType;
+    public final String startDate;
+    public final String endDate;
+    public final Boolean searchAllSensors;
 
-    public StatsQueryRequestDTO() {
-    }
-
-    public StatsQueryRequestDTO(List<Long> sensorIds, List<MetricType> metrics, StatType statType, String startDate, String endDate) {
+    public StatsQueryRequestDTO(final List<Long> sensorIds, final List<MetricType> metrics, final StatType statType, final String startDate, final String endDate, final Boolean searchAllSensors) {
         this.sensorIds = sensorIds;
         this.metrics = metrics;
         this.statType = statType;
         this.startDate = startDate;
         this.endDate = endDate;
-    }
-
-    public List<Long> getSensorIds() {
-        return sensorIds;
-    }
-
-    public void setSensorIds(List<Long> sensorIds) {
-        this.sensorIds = sensorIds;
-    }
-
-    public List<MetricType> getMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(List<MetricType> metrics) {
-        this.metrics = metrics;
-    }
-
-    public StatType getStatType() {
-        return statType;
-    }
-
-    public void setStatType(StatType statType) {
-        this.statType = statType;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+        this.searchAllSensors = searchAllSensors;
     }
 
     @Override
@@ -71,6 +30,7 @@ public class StatsQueryRequestDTO {
                 ", statType=" + statType +
                 ", startDate='" + startDate + '\'' +
                 ", endDate='" + endDate + '\'' +
+                ", searchAllSensors=" + searchAllSensors +
                 '}';
     }
 }

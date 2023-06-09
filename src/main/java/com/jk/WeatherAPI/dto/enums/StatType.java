@@ -1,7 +1,6 @@
 package com.jk.WeatherAPI.dto.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.sun.istack.NotNull;
 
 import java.util.Arrays;
 
@@ -13,7 +12,7 @@ public enum StatType {
 
     public final String value;
 
-    StatType(@NotNull final String value) {
+    StatType(final String value) {
         this.value = value;
     }
 

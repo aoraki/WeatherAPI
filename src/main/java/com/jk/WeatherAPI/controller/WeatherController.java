@@ -4,8 +4,12 @@ import com.jk.WeatherAPI.dto.SensorDataDTO;
 import com.jk.WeatherAPI.dto.StatsQueryRequestDTO;
 import com.jk.WeatherAPI.dto.StatsQueryResponseDTO;
 import com.jk.WeatherAPI.service.MetricsService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/weather")
@@ -22,13 +26,37 @@ public class WeatherController {
      * However, I wanted to utilise a query object being passed in the payload of the request
      */
     @PostMapping("/stats")
-    public ResponseEntity<StatsQueryResponseDTO> getSensorMetrics(@RequestBody StatsQueryRequestDTO statsQuery) {
+    public ResponseEntity<StatsQueryResponseDTO> getSensorMetrics(@RequestBody final StatsQueryRequestDTO statsQuery) {
         return ResponseEntity.ok(this.metricsService.getStats(statsQuery));
     }
 
     @PostMapping("/metrics")
-    public ResponseEntity<?> addMetric(@RequestBody SensorDataDTO sensorData) {
-        metricsService.submitMetrics(sensorData);
-        return ResponseEntity.ok("Metric added successfully");
+    public ResponseEntity<SensorDataDTO> createSample(@RequestBody @Valid final SensorDataDTO sensorData) {
+        final SensorDataDTO sensorDataDTO = metricsService.createSample(sensorData);
+        return new ResponseEntity(sensorDataDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/metrics")
+    public ResponseEntity<List<SensorDataDTO>> getAllSamples() {
+        final List<SensorDataDTO> sensorDataDTO = metricsService.getAllSamples();
+        return new ResponseEntity(sensorDataDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/metrics/{sampleId}")
+    public ResponseEntity<SensorDataDTO> getSampleById(@PathVariable final Long sampleId) {
+        final SensorDataDTO sensorDataDTO = metricsService.getSampleBySampleId(sampleId);
+        return new ResponseEntity(sensorDataDTO, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/metrics/{sampleId}")
+    public ResponseEntity<Boolean> deleteSampleById(@PathVariable final Long sampleId) {
+        final Boolean deleted = metricsService.deleteSample(sampleId);
+        return new ResponseEntity(deleted, HttpStatus.OK);
+    }
+
+    @PatchMapping("/metrics")
+    public ResponseEntity<SensorDataDTO> upateSample(@RequestBody final SensorDataDTO sensorData) {
+        final SensorDataDTO sensorDataDTO = metricsService.updateSample(sensorData);
+        return new ResponseEntity(sensorDataDTO, HttpStatus.OK);
     }
 }
