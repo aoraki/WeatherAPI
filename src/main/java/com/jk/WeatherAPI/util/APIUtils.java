@@ -4,23 +4,14 @@ import com.jk.WeatherAPI.dto.MetricDTO;
 import com.jk.WeatherAPI.dto.SensorDataDTO;
 import com.jk.WeatherAPI.dto.enums.MetricType;
 import com.jk.WeatherAPI.entities.SensorData;
-import com.jk.WeatherAPI.service.MetricsServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+
 import java.util.List;
 
 public class APIUtils {
-
-    final Logger logger = LoggerFactory.getLogger(MetricsServiceImpl.class);
-    final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public SensorData convertDTOToSensorData(final SensorDataDTO sensorData) {
         Double temperature = getMetricValue(sensorData, MetricType.TEMPERATURE);
@@ -49,26 +40,5 @@ public class APIUtils {
                 .map(metric -> metric.metricValue)
                 .findFirst()
                 .orElse(null);
-    }
-
-    public Date parseStartDate(final String startDateStr) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-        final Date oneDayAgo = calendar.getTime();
-        return parseDateTime(startDateStr, oneDayAgo);
-    }
-
-    public Date parseEndDate(final String endDateStr) {
-        return parseDateTime(endDateStr, new Date());
-    }
-
-    public Date parseDateTime(final String dateStr, final Date defaultValue) {
-        try {
-            final Date date = dateFormat.parse(dateStr);
-            return date;
-        } catch (ParseException e) {
-            logger.error("Error occurred while parsing the date string: " + dateStr);
-            return defaultValue;
-        }
     }
 }
