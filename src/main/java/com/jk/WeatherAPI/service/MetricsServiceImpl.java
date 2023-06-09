@@ -31,7 +31,7 @@ public class MetricsServiceImpl implements MetricsService {
         logger.info("Query submitted: {}", query);
 
         if(!validation.isValidSensors(query)){
-            throw new AppException(400, "Bad Request.  Invalid sensor search options provided in query request.");
+            throw new AppException(400, "Bad Request. Invalid sensor search options provided in query request.");
         }
 
         List<MetricResponseDTO> metricResponses;
@@ -138,6 +138,8 @@ public class MetricsServiceImpl implements MetricsService {
                     return searchAllSensors ? sensorDataRepo.getMinTemperatureForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getMinTemperatureBySensorIdsAndDateRange(sensorIds, startDate, endDate);
                 else if (statType == StatType.MAX)
                     return searchAllSensors ? sensorDataRepo.getMaxTemperatureForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getMaxTemperatureBySensorIdsAndDateRange(sensorIds, startDate, endDate);
+                else if (statType == StatType.SUM)
+                    return searchAllSensors ? sensorDataRepo.getSumOfTemperatureForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getSumOfTemperatureBySensorIdsAndDateRange(sensorIds, startDate, endDate);
             case WINDSPEED:
                 if (statType == StatType.AVG)
                     return searchAllSensors ? sensorDataRepo.getAverageWindspeedForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getAverageWindspeedBySensorIdsAndDateRange(sensorIds, startDate, endDate);
@@ -145,6 +147,8 @@ public class MetricsServiceImpl implements MetricsService {
                     return searchAllSensors ? sensorDataRepo.getMinWindspeedForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getMinWindspeedBySensorIdsAndDateRange(sensorIds, startDate, endDate);
                 else if (statType == StatType.MAX)
                     return searchAllSensors ? sensorDataRepo.getMaxWindspeedForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getMaxWindspeedBySensorIdsAndDateRange(sensorIds, startDate, endDate);
+                else if (statType == StatType.SUM)
+                    return searchAllSensors ? sensorDataRepo.getSumOfWindspeedForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getSumOfWindspeedBySensorIdsAndDateRange(sensorIds, startDate, endDate);
             case HUMIDITY:
                 if (statType == StatType.AVG)
                     return searchAllSensors ? sensorDataRepo.getAverageHumidityForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getAverageHumidityBySensorIdsAndDateRange(sensorIds, startDate, endDate);
@@ -152,6 +156,8 @@ public class MetricsServiceImpl implements MetricsService {
                     return searchAllSensors ? sensorDataRepo.getMinHumidityForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getMinHumidityBySensorIdsAndDateRange(sensorIds, startDate, endDate);
                 else if (statType == StatType.MAX)
                     return searchAllSensors ? sensorDataRepo.getMaxHumidityForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getMaxHumidityBySensorIdsAndDateRange(sensorIds, startDate, endDate);
+                else if (statType == StatType.SUM)
+                    return searchAllSensors ? sensorDataRepo.getSumOfHumidityForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getSumOfHumidityBySensorIdsAndDateRange(sensorIds, startDate, endDate);
             case RAINFALL:
                 if (statType == StatType.AVG)
                     return searchAllSensors ? sensorDataRepo.getAverageRainfallForDateRangeAllSensors(startDate, endDate) : sensorDataRepo.getAverageRainfallBySensorIdsAndDateRange(sensorIds, startDate, endDate);

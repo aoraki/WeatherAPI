@@ -25,6 +25,9 @@ public interface SensorDataRepo extends JpaRepository<SensorData, Long> {
     @Query("SELECT MIN(s.temperature) FROM SensorData s WHERE s.sensorId IN :sensorIds AND s.sampleTime BETWEEN :startDate AND :endDate")
     Double getMinTemperatureBySensorIdsAndDateRange(List<Long> sensorIds, Date startDate, Date endDate);
 
+    @Query("SELECT SUM(s.temperature) FROM SensorData s WHERE s.sensorId IN :sensorIds AND s.sampleTime BETWEEN :startDate AND :endDate")
+    Double getSumOfTemperatureBySensorIdsAndDateRange(List<Long> sensorIds, Date startDate, Date endDate);
+
     @Query("SELECT AVG(s.temperature) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
     Double getAverageTemperatureForDateRangeAllSensors(Date startDate, Date endDate);
 
@@ -34,6 +37,8 @@ public interface SensorDataRepo extends JpaRepository<SensorData, Long> {
     @Query("SELECT MIN(s.temperature) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
     Double getMinTemperatureForDateRangeAllSensors(Date startDate, Date endDate);
 
+    @Query("SELECT SUM(s.temperature) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
+    Double getSumOfTemperatureForDateRangeAllSensors(Date startDate, Date endDate);
 
     // Windspeed Queries
     @Query("SELECT AVG(s.windspeed) FROM SensorData s WHERE s.sensorId IN :sensorIds AND s.sampleTime BETWEEN :startDate AND :endDate")
@@ -45,6 +50,9 @@ public interface SensorDataRepo extends JpaRepository<SensorData, Long> {
     @Query("SELECT MIN(s.windspeed) FROM SensorData s WHERE s.sensorId IN :sensorIds AND s.sampleTime BETWEEN :startDate AND :endDate")
     Double getMinWindspeedBySensorIdsAndDateRange(List<Long> sensorIds, Date startDate, Date endDate);
 
+    @Query("SELECT SUM(s.windspeed) FROM SensorData s WHERE s.sensorId IN :sensorIds AND s.sampleTime BETWEEN :startDate AND :endDate")
+    Double getSumOfWindspeedBySensorIdsAndDateRange(List<Long> sensorIds, Date startDate, Date endDate);
+
     @Query("SELECT AVG(s.windspeed) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
     Double getAverageWindspeedForDateRangeAllSensors(Date startDate, Date endDate);
 
@@ -54,6 +62,8 @@ public interface SensorDataRepo extends JpaRepository<SensorData, Long> {
     @Query("SELECT MIN(s.windspeed) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
     Double getMinWindspeedForDateRangeAllSensors(Date startDate, Date endDate);
 
+    @Query("SELECT SUM(s.windspeed) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
+    Double getSumOfWindspeedForDateRangeAllSensors(Date startDate, Date endDate);
 
     // Humidity Queries
     @Query("SELECT AVG(s.humidity) FROM SensorData s WHERE s.sensorId IN :sensorIds AND s.sampleTime BETWEEN :startDate AND :endDate")
@@ -65,6 +75,9 @@ public interface SensorDataRepo extends JpaRepository<SensorData, Long> {
     @Query("SELECT MIN(s.humidity) FROM SensorData s WHERE s.sensorId IN :sensorIds AND s.sampleTime BETWEEN :startDate AND :endDate")
     Double getMinHumidityBySensorIdsAndDateRange(List<Long> sensorIds, Date startDate, Date endDate);
 
+    @Query("SELECT SUM(s.humidity) FROM SensorData s WHERE s.sensorId IN :sensorIds AND s.sampleTime BETWEEN :startDate AND :endDate")
+    Double getSumOfHumidityBySensorIdsAndDateRange(List<Long> sensorIds, Date startDate, Date endDate);
+
     @Query("SELECT AVG(s.humidity) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
     Double getAverageHumidityForDateRangeAllSensors(Date startDate, Date endDate);
 
@@ -74,6 +87,8 @@ public interface SensorDataRepo extends JpaRepository<SensorData, Long> {
     @Query("SELECT MIN(s.humidity) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
     Double getMinHumidityForDateRangeAllSensors(Date startDate, Date endDate);
 
+    @Query("SELECT SUM(s.humidity) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
+    Double getSumOfHumidityForDateRangeAllSensors(Date startDate, Date endDate);
 
     // Rainfall Queries
     @Query("SELECT AVG(s.rainfall) FROM SensorData s WHERE s.sensorId IN :sensorIds AND s.sampleTime BETWEEN :startDate AND :endDate")
