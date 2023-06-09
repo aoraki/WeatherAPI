@@ -1,5 +1,6 @@
 package com.jk.WeatherAPI.controller;
 
+import com.jk.WeatherAPI.dto.enums.StatType;
 import com.jk.WeatherAPI.exception.AppException;
 import com.jk.WeatherAPI.service.MetricsService;
 import com.jk.WeatherAPI.util.TestUtils;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.jmx.support.MetricType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -40,6 +42,145 @@ public class WeatherControllerTest {
     void getStatsInvalidHTTPMethod() throws Exception {
         mockMvc.perform(put("/v1/weather/stats"))
                 .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    void getStatsSuccess200Response() throws Exception {
+        given(metricsService.getStats(any())).willReturn(testUtils.generateStatsQueryResponseDTO());
+
+        final String jsonPayload = "{\n" +
+                "    \"metrics\": [\"TEMPERATURE\", \"RAINFALL\"],\n" +
+                "    \"statType\": \"AVG\",\n" +
+                "    \"searchAllSensors\": true,\n" +
+                "    \"startDate\": \"2023-06-01\",\n" +
+                "    \"endDate\": \"2023-06-09\"\n" +
+                "}";
+
+
+        mockMvc.perform(post("/v1/weather/stats")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonPayload))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.metricResponses").isArray())
+            .andExpect(jsonPath("$.metricResponses.length()").value(2))
+            .andExpect(jsonPath("$.metricResponses.[0].metricValue").value(40))
+            .andExpect(jsonPath("$.metricResponses.[1].metricValue").value(20));
+    }
+
+    @Test
+    void getStatsBadMetricNames400Response() throws Exception {
+        given(metricsService.getStats(any())).willReturn(testUtils.generateStatsQueryResponseDTO());
+
+        final String jsonPayload = "{\n" +
+                "    \"metrics\": [\"TEST\", \"BLAH\", \"RAINFALL\", \"HUMIDITY\"],\n" +
+                "    \"statType\": \"AVG\",\n" +
+                "    \"searchAllSensors\": true,\n" +
+                "    \"startDate\": \"2023-06-01\",\n" +
+                "    \"endDate\": \"2023-06-09\"\n" +
+                "}";
+
+
+        mockMvc.perform(post("/v1/weather/stats")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getStatsMissingMetrics400Response() throws Exception {
+        given(metricsService.getStats(any())).willReturn(testUtils.generateStatsQueryResponseDTO());
+
+        final String jsonPayload = "{\n" +
+                "    \"statType\": \"AVG\",\n" +
+                "    \"searchAllSensors\": true,\n" +
+                "    \"startDate\": \"2023-06-01\",\n" +
+                "    \"endDate\": \"2023-06-09\"\n" +
+                "}";
+
+
+        mockMvc.perform(post("/v1/weather/stats")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getStatsBadStatType400Response() throws Exception {
+        given(metricsService.getStats(any())).willReturn(testUtils.generateStatsQueryResponseDTO());
+
+        final String jsonPayload = "{\n" +
+                "    \"metrics\": [\"TEMPERATURE\", \"WINDSPEED\", \"RAINFALL\", \"HUMIDITY\"],\n" +
+                "    \"statType\": \"BLAH\",\n" +
+                "    \"searchAllSensors\": true,\n" +
+                "    \"startDate\": \"2023-06-01\",\n" +
+                "    \"endDate\": \"2023-06-09\"\n" +
+                "}";
+
+
+        mockMvc.perform(post("/v1/weather/stats")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getStatsMissingStatType400Response() throws Exception {
+        given(metricsService.getStats(any())).willReturn(testUtils.generateStatsQueryResponseDTO());
+
+        final String jsonPayload = "{\n" +
+                "    \"metrics\": [\"TEMPERATURE\", \"WINDSPEED\", \"RAINFALL\", \"HUMIDITY\"],\n" +
+                "    \"searchAllSensors\": true,\n" +
+                "    \"startDate\": \"2023-06-01\",\n" +
+                "    \"endDate\": \"2023-06-09\"\n" +
+                "}";
+
+        mockMvc.perform(post("/v1/weather/stats")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getStatsBadSearchAllSensors400Response() throws Exception {
+        given(metricsService.getStats(any())).willReturn(testUtils.generateStatsQueryResponseDTO());
+
+        final String jsonPayload = "{\n" +
+                "    \"metrics\": [\"TEMPERATURE\", \"WINDSPEED\", \"RAINFALL\", \"HUMIDITY\"],\n" +
+                "    \"statType\": \"AVG\",\n" +
+                "    \"searchAllSensors\": hello,\n" +
+                "    \"startDate\": \"2023-06-01\",\n" +
+                "    \"endDate\": \"2023-06-09\"\n" +
+                "}";
+
+        mockMvc.perform(post("/v1/weather/stats")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getStatsBadSensorIds400Response() throws Exception {
+        given(metricsService.getStats(any())).willReturn(testUtils.generateStatsQueryResponseDTO());
+
+        final String jsonPayload = "{\n" +
+                "    \"sensorIds\": [\"test\", true, 1L],\n" +
+                "    \"metrics\": [\"TEMPERATURE\", \"WINDSPEED\", \"RAINFALL\", \"HUMIDITY\"],\n" +
+                "    \"statType\": \"AVG\",\n" +
+                "    \"startDate\": \"2023-06-01\",\n" +
+                "    \"endDate\": \"2023-06-09\"\n" +
+                "}";
+
+        mockMvc.perform(post("/v1/weather/stats")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
