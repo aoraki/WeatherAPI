@@ -130,7 +130,7 @@ public class WeatherControllerTest {
 
     @Test
     void createSampleNoSampleIdBadRequest() throws Exception {
-        final String jsonPayload = "{\"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(post("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -140,7 +140,7 @@ public class WeatherControllerTest {
 
     @Test
     void createSampleNullSampleIdBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : null, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : null, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(post("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -150,7 +150,7 @@ public class WeatherControllerTest {
 
     @Test
     void createSampleNoSensorIdBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(post("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -160,7 +160,7 @@ public class WeatherControllerTest {
 
     @Test
     void createSampleNullSensorIdBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : null, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : null, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(post("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -189,8 +189,18 @@ public class WeatherControllerTest {
     }
 
     @Test
+    void createSampleBadMetricNameBadRequest() throws Exception {
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"BLAH\", \"metricValue\" : 10.0}]}";
+        mockMvc.perform(post("/v1/weather/metrics")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void createSampleSampleIdNullValueBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : null, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : null, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(post("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -200,7 +210,7 @@ public class WeatherControllerTest {
 
     @Test
     void createSampleSensorIdNullValueBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : null, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : null, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(post("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -242,7 +252,7 @@ public class WeatherControllerTest {
     void createSampleSuccess201Response() throws Exception {
         given(metricsService.createSample(any())).willReturn(testUtils.generateSensorDataDTO(1L, 1L));
 
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
 
         mockMvc.perform(post("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
@@ -259,7 +269,7 @@ public class WeatherControllerTest {
     @Test
     void createSample409Conflict() throws Exception {
         given(metricsService.createSample(any())).willThrow(new AppException(409, "A sample with sampleId 1 already exists"));
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
 
         mockMvc.perform(post("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
@@ -270,7 +280,7 @@ public class WeatherControllerTest {
 
     @Test
     void createSampleReturn415() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
 
         mockMvc.perform(post("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
@@ -281,7 +291,7 @@ public class WeatherControllerTest {
 
     @Test
     void updateSampleNoSampleIdBadRequest() throws Exception {
-        final String jsonPayload = "{\"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(patch("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -291,7 +301,7 @@ public class WeatherControllerTest {
 
     @Test
     void updateSampleNullSampleIdBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : null, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : null, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(patch("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -301,7 +311,7 @@ public class WeatherControllerTest {
 
     @Test
     void updateSampleNoSensorIdBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(patch("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -311,7 +321,7 @@ public class WeatherControllerTest {
 
     @Test
     void updateSampleNullSensorIdBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : null, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : null, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(patch("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -340,8 +350,18 @@ public class WeatherControllerTest {
     }
 
     @Test
+    void updateSampleBadMetricNameBadRequest() throws Exception {
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"BLAH\", \"metricValue\" : 10.0}]}";
+        mockMvc.perform(patch("/v1/weather/metrics")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonPayload))
+            .andExpect(status().isBadRequest());
+    }
+    
+    @Test
     void updateSampleSampleIdNullValueBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : null, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : null, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(patch("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -351,7 +371,7 @@ public class WeatherControllerTest {
 
     @Test
     void updateSampleSensorIdNullValueBadRequest() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : null, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : null, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(patch("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -392,7 +412,7 @@ public class WeatherControllerTest {
     @Test
     void updateSampleSuccess200Response() throws Exception {
         given(metricsService.updateSample(any())).willReturn(testUtils.generateSensorDataDTO(1L, 111L));
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 111, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 111, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
 
         mockMvc.perform(patch("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
@@ -409,7 +429,7 @@ public class WeatherControllerTest {
     @Test
     void updateSampleNotFoundResponse() throws Exception {
         given(metricsService.updateSample(any())).willThrow(new AppException(404, "A sample with sample id 1 does not exist. Cannot update"));
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
 
         mockMvc.perform(patch("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
@@ -420,7 +440,7 @@ public class WeatherControllerTest {
 
     @Test
     void updateSampleReturn415() throws Exception {
-        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMP\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUM\", \"metricValue\" : 20.0}]}";
+        final String jsonPayload = "{\"sampleId\" : 1, \"sensorId\" : 1, \"metrics\" : [{\"metricType\" : \"TEMPERATURE\", \"metricValue\" : 10.0}, {\"metricType\" : \"HUMIDITY\", \"metricValue\" : 20.0}]}";
         mockMvc.perform(patch("/v1/weather/metrics")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_XML)
