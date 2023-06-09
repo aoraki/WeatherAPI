@@ -1,15 +1,28 @@
 package com.jk.WeatherAPI.util;
 
-import com.jk.WeatherAPI.dto.MetricDTO;
-import com.jk.WeatherAPI.dto.SensorDataDTO;
+import com.jk.WeatherAPI.dto.*;
 import com.jk.WeatherAPI.dto.enums.MetricType;
+import com.jk.WeatherAPI.dto.enums.StatType;
 import com.jk.WeatherAPI.entities.SensorData;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TestUtils {
+
+    public StatsQueryRequestDTO generateStatsQueryRequestDTO(final List<Long> sensorIds, final List<MetricType> metricTypes, final StatType statType, final String startDate, final String endDate, final Boolean searchAllSensors) {
+        return new StatsQueryRequestDTO(sensorIds, metricTypes, statType, startDate, endDate, searchAllSensors);
+    }
+
+    public StatsQueryResponseDTO generateStatsQueryResponseDTO() {
+        return new StatsQueryResponseDTO(Arrays.asList(generateMetricResponseDTO(MetricType.TEMPERATURE, StatType.AVG, 40.0), generateMetricResponseDTO(MetricType.RAINFALL, StatType.AVG, 20.0)));
+    }
+
+    public MetricResponseDTO generateMetricResponseDTO(final MetricType metricType, final StatType statType, final Double metricValue){
+        return new MetricResponseDTO(metricType, statType,metricValue);
+    }
 
     public SensorDataDTO generateSensorDataDTO(final Long sampleId, final Long sensorId) {
         List<MetricDTO> metrics = generateMetricsDTO();

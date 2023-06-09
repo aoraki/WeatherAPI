@@ -1,7 +1,9 @@
 package com.jk.WeatherAPI.service;
 
 import com.jk.WeatherAPI.dto.SensorDataDTO;
+import com.jk.WeatherAPI.dto.StatsQueryResponseDTO;
 import com.jk.WeatherAPI.dto.enums.MetricType;
+import com.jk.WeatherAPI.dto.enums.StatType;
 import com.jk.WeatherAPI.entities.SensorData;
 import com.jk.WeatherAPI.exception.AppException;
 import com.jk.WeatherAPI.repository.SensorDataRepo;
@@ -13,15 +15,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class MetricsServiceImplTest {
@@ -34,12 +39,332 @@ public class MetricsServiceImplTest {
 
     final TestUtils testUtils = new TestUtils();
 
+    @Test
+    void queryMetricsAllMetricTypesAverageSuccess() {
+        given(sensorDateRepository.getAverageHumidityBySensorIdsAndDateRange(any(), any(), any())).willReturn(10.0);
+        given(sensorDateRepository.getAverageWindspeedBySensorIdsAndDateRange(any(), any(), any())).willReturn(20.0);
+        given(sensorDateRepository.getAverageTemperatureBySensorIdsAndDateRange(any(), any(), any())).willReturn(30.0);
+        given(sensorDateRepository.getAverageRainfallBySensorIdsAndDateRange(any(), any(), any())).willReturn(40.0);
+
+        final StatsQueryResponseDTO response =metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.AVG, "2023-06-01", "2023-06-07", false));
+        verify(sensorDateRepository, times(1)).getAverageHumidityBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getAverageWindspeedBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getAverageTemperatureBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getAverageRainfallBySensorIdsAndDateRange(any(), any(), any());
+
+        assertThat(response.metricResponses.size()).isEqualTo(4);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(40.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(20.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(10.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(30.0);
+
+    }
+
+    @Test
+    void queryMetricsAllMetricTypesMinimumSuccess() {
+        given(sensorDateRepository.getMinHumidityBySensorIdsAndDateRange(any(), any(), any())).willReturn(10.0);
+        given(sensorDateRepository.getMinWindspeedBySensorIdsAndDateRange(any(), any(), any())).willReturn(20.0);
+        given(sensorDateRepository.getMinTemperatureBySensorIdsAndDateRange(any(), any(), any())).willReturn(30.0);
+        given(sensorDateRepository.getMinRainfallBySensorIdsAndDateRange(any(), any(), any())).willReturn(40.0);
+
+        final StatsQueryResponseDTO response =metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.MIN, "2023-06-01", "2023-06-07", false));
+        verify(sensorDateRepository, times(1)).getMinHumidityBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getMinWindspeedBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getMinTemperatureBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getMinRainfallBySensorIdsAndDateRange(any(), any(), any());
+
+        assertThat(response.metricResponses.size()).isEqualTo(4);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).statType).isEqualTo(StatType.MIN);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(40.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).statType).isEqualTo(StatType.MIN);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(20.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).statType).isEqualTo(StatType.MIN);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(10.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).statType).isEqualTo(StatType.MIN);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(30.0);
+
+    }
+
+    @Test
+    void queryMetricsAllMetricTypesMaximumSuccess() {
+        given(sensorDateRepository.getMaxHumidityBySensorIdsAndDateRange(any(), any(), any())).willReturn(10.0);
+        given(sensorDateRepository.getMaxWindspeedBySensorIdsAndDateRange(any(), any(), any())).willReturn(20.0);
+        given(sensorDateRepository.getMaxTemperatureBySensorIdsAndDateRange(any(), any(), any())).willReturn(30.0);
+        given(sensorDateRepository.getMaxRainfallBySensorIdsAndDateRange(any(), any(), any())).willReturn(40.0);
+
+        final StatsQueryResponseDTO response = metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.MAX, "2023-06-01", "2023-06-07", false));
+        verify(sensorDateRepository, times(1)).getMaxHumidityBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getMaxWindspeedBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getMaxTemperatureBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getMaxRainfallBySensorIdsAndDateRange(any(), any(), any());
+
+        assertThat(response.metricResponses.size()).isEqualTo(4);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).statType).isEqualTo(StatType.MAX);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(40.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).statType).isEqualTo(StatType.MAX);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(20.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).statType).isEqualTo(StatType.MAX);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(10.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).statType).isEqualTo(StatType.MAX);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(30.0);
+
+    }
+
+    @Test
+    void queryMetricsAllMetricTypesSumSuccess() {
+        given(sensorDateRepository.getSumOfHumidityBySensorIdsAndDateRange(any(), any(), any())).willReturn(10.0);
+        given(sensorDateRepository.getSumOfWindspeedBySensorIdsAndDateRange(any(), any(), any())).willReturn(20.0);
+        given(sensorDateRepository.getSumOfTemperatureBySensorIdsAndDateRange(any(), any(), any())).willReturn(30.0);
+        given(sensorDateRepository.getSumOfRainfallBySensorIdsAndDateRange(any(), any(), any())).willReturn(40.0);
+
+        final StatsQueryResponseDTO response = metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.SUM, "2023-06-01", "2023-06-07", false));
+        verify(sensorDateRepository, times(1)).getSumOfHumidityBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getSumOfWindspeedBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getSumOfTemperatureBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getSumOfRainfallBySensorIdsAndDateRange(any(), any(), any());
+
+        assertThat(response.metricResponses.size()).isEqualTo(4);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).statType).isEqualTo(StatType.SUM);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(40.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).statType).isEqualTo(StatType.SUM);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(20.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).statType).isEqualTo(StatType.SUM);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(10.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).statType).isEqualTo(StatType.SUM);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(30.0);
+    }
+
+    @Test
+    void queryMetricsAllMetricTypesAverageAllSensorsSuccess() {
+        given(sensorDateRepository.getAverageTemperatureForDateRangeAllSensors(any(), any())).willReturn(10.0);
+        given(sensorDateRepository.getAverageWindspeedForDateRangeAllSensors(any(), any())).willReturn(20.0);
+        given(sensorDateRepository.getAverageHumidityForDateRangeAllSensors(any(), any())).willReturn(30.0);
+        given(sensorDateRepository.getAverageRainfallForDateRangeAllSensors(any(), any())).willReturn(40.0);
+
+        final StatsQueryResponseDTO response = metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.AVG, "2023-06-01", "2023-06-07", true));
+        verify(sensorDateRepository, times(1)).getAverageTemperatureForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getAverageWindspeedForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getAverageHumidityForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getAverageRainfallForDateRangeAllSensors(any(), any());
+
+        assertThat(response.metricResponses.size()).isEqualTo(4);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(40.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(20.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(30.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(10.0);
+
+    }
+
+    @Test
+    void queryMetricsAllMetricTypesMinimumAllSensorsSuccess() {
+        given(sensorDateRepository.getMinTemperatureForDateRangeAllSensors(any(), any())).willReturn(10.0);
+        given(sensorDateRepository.getMinWindspeedForDateRangeAllSensors(any(), any())).willReturn(20.0);
+        given(sensorDateRepository.getMinHumidityForDateRangeAllSensors(any(), any())).willReturn(30.0);
+        given(sensorDateRepository.getMinRainfallForDateRangeAllSensors(any(), any())).willReturn(40.0);
+
+        final StatsQueryResponseDTO response = metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.MIN, "2023-06-01", "2023-06-07", true));
+        verify(sensorDateRepository, times(1)).getMinTemperatureForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getMinWindspeedForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getMinHumidityForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getMinRainfallForDateRangeAllSensors(any(), any());
+
+        assertThat(response.metricResponses.size()).isEqualTo(4);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).statType).isEqualTo(StatType.MIN);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(40.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).statType).isEqualTo(StatType.MIN);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(20.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).statType).isEqualTo(StatType.MIN);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(30.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).statType).isEqualTo(StatType.MIN);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(10.0);
+
+    }
+
+    @Test
+    void queryMetricsAllMetricTypesMaximumAllSensorsSuccess() {
+        given(sensorDateRepository.getMaxTemperatureForDateRangeAllSensors(any(), any())).willReturn(10.0);
+        given(sensorDateRepository.getMaxWindspeedForDateRangeAllSensors(any(), any())).willReturn(20.0);
+        given(sensorDateRepository.getMaxHumidityForDateRangeAllSensors(any(), any())).willReturn(30.0);
+        given(sensorDateRepository.getMaxRainfallForDateRangeAllSensors(any(), any())).willReturn(40.0);
+
+        final StatsQueryResponseDTO response = metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.MAX, "2023-06-01", "2023-06-07", true));
+        verify(sensorDateRepository, times(1)).getMaxTemperatureForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getMaxTemperatureForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getMaxTemperatureForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getMaxTemperatureForDateRangeAllSensors(any(), any());
+
+        assertThat(response.metricResponses.size()).isEqualTo(4);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).statType).isEqualTo(StatType.MAX);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(40.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).statType).isEqualTo(StatType.MAX);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(20.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).statType).isEqualTo(StatType.MAX);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(30.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).statType).isEqualTo(StatType.MAX);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(10.0);
+    }
+
+    @Test
+    void queryMetricsAllMetricTypesSumAllSensorsSuccess() {
+        given(sensorDateRepository.getSumOfTemperatureForDateRangeAllSensors(any(), any())).willReturn(10.0);
+        given(sensorDateRepository.getSumOfWindspeedForDateRangeAllSensors(any(), any())).willReturn(20.0);
+        given(sensorDateRepository.getSumOfHumidityForDateRangeAllSensors(any(), any())).willReturn(30.0);
+        given(sensorDateRepository.getSumOfRainfallForDateRangeAllSensors(any(), any())).willReturn(40.0);
+
+        final StatsQueryResponseDTO response = metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.SUM, "2023-06-01", "2023-06-07", true));
+        verify(sensorDateRepository, times(1)).getSumOfTemperatureForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getSumOfWindspeedForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getSumOfHumidityForDateRangeAllSensors(any(), any());
+        verify(sensorDateRepository, times(1)).getSumOfRainfallForDateRangeAllSensors(any(), any());
+        assertThat(response.metricResponses.size()).isEqualTo(4);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).statType).isEqualTo(StatType.SUM);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(40.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).statType).isEqualTo(StatType.SUM);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(20.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).statType).isEqualTo(StatType.SUM);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(30.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).statType).isEqualTo(StatType.SUM);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(10.0);
+    }
+
+    @Test
+    void queryMetricsGetAllMetricsAverageForTodaySuccess() {
+        given(sensorDateRepository.getAverageHumidityBySensorIdsAndDateRange(any(), any(), any())).willReturn(10.0);
+        given(sensorDateRepository.getAverageWindspeedBySensorIdsAndDateRange(any(), any(), any())).willReturn(20.0);
+        given(sensorDateRepository.getAverageTemperatureBySensorIdsAndDateRange(any(), any(), any())).willReturn(30.0);
+        given(sensorDateRepository.getAverageRainfallBySensorIdsAndDateRange(any(), any(), any())).willReturn(40.0);
+
+        final StatsQueryResponseDTO response = metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.AVG, null, null, false));
+        verify(sensorDateRepository, times(1)).getAverageHumidityBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getAverageWindspeedBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getAverageTemperatureBySensorIdsAndDateRange(any(), any(), any());
+        verify(sensorDateRepository, times(1)).getAverageRainfallBySensorIdsAndDateRange(any(), any(), any());
+        assertThat(response.metricResponses.size()).isEqualTo(4);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(40.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(20.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(10.0);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).statType).isEqualTo(StatType.AVG);
+        assertThat(response.metricResponses.get(0).getMetricResponseDTOByType(response.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(30.0);
+
+
+
+    }
+
+    @Test
+    void queryMetricsDatesInTheFutureBadRequest(){
+        AppException exception = Assertions.assertThrows(AppException.class, () -> {
+            metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.SUM, "2523-06-01", "2523-06-07", false));
+        });
+
+        assertThat(exception.getErrorMessage()).isEqualTo("Bad Request.  Invalid date parameters provided");
+        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void queryMetricsBadDateStringsBadRequest(){
+        AppException exception = Assertions.assertThrows(AppException.class, () -> {
+            metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.SUM, "2023-15-35", "2023-18-77", false));
+        });
+
+        assertThat(exception.getErrorMessage()).isEqualTo("Bad Request.  Invalid date parameters provided");
+        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void queryMetricsWellFormattedDateStringsButEndDateLessThanStartDateBadRequest(){
+
+        AppException exception = Assertions.assertThrows(AppException.class, () -> {
+            metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.SUM, "2023-06-06", "2023-05-01", false));
+        });
+
+        assertThat(exception.getErrorMessage()).isEqualTo("Bad Request.  Invalid date parameters provided");
+        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void queryMetricsNullDateBadRequest(){
+
+        AppException exception = Assertions.assertThrows(AppException.class, () -> {
+            metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.SUM, null, "2023-06-01", false));
+        });
+
+        assertThat(exception.getErrorMessage()).isEqualTo("Bad Request.  Invalid date parameters provided");
+        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void queryMetricsGarbageDateBadRequest(){
+
+        AppException exception = Assertions.assertThrows(AppException.class, () -> {
+            metricsService.getStats(testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L, 2L), Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.SUM, "hello", "hello", false));
+        });
+
+        assertThat(exception.getErrorMessage()).isEqualTo("Bad Request.  Invalid date parameters provided");
+        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void queryMetricsNullSensorsListNullAllSensorsFlagBadRequest(){
+
+        AppException exception = Assertions.assertThrows(AppException.class, () -> {
+            metricsService.getStats(testUtils.generateStatsQueryRequestDTO(null, Arrays.asList(MetricType.HUMIDITY, MetricType.RAINFALL, MetricType.TEMPERATURE, MetricType.WINDSPEED), StatType.SUM, "hello", "hello", null));
+        });
+
+        assertThat(exception.getErrorMessage()).isEqualTo("Bad Request. Invalid sensor search options provided in query request.");
+        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 
     @Test
     void getAllSamplesNoSamplesInDB() {
         given(sensorDateRepository.findAll()).willReturn(new ArrayList<>());
 
-        // Invoke the method under test
         List<SensorDataDTO> samples = metricsService.getAllSamples();
         assertThat(samples.size()).isEqualTo(0);
     }
