@@ -99,8 +99,6 @@ public interface SensorDataRepo extends JpaRepository<SensorData, Long> {
 
     @Query("SELECT SUM(s.rainfall) FROM SensorData s WHERE s.sampleTime BETWEEN :startDate AND :endDate")
     Double getSumOfRainfallForDateRangeAllSensors(Date startDate, Date endDate);
-
-
 }
 
 

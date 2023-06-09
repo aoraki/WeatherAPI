@@ -15,12 +15,12 @@ public class SensorData {
 
     private Long sensorId;
     private Timestamp sampleTime;
-    private double temperature;
-    private double rainfall;
-    private double windspeed;
-    private double humidity;
+    private Double temperature;
+    private Double rainfall;
+    private Double windspeed;
+    private Double humidity;
 
-    public SensorData(Long sampleId, Long sensorId, Timestamp sampleTime, double temperature, double rainfall, double windspeed, double humidity) {
+    public SensorData(Long sampleId, Long sensorId, Timestamp sampleTime, Double temperature, Double rainfall, Double windspeed, Double humidity) {
         this.sampleId = sampleId;
         this.sensorId = sensorId;
         this.sampleTime = sampleTime;
@@ -57,7 +57,7 @@ public class SensorData {
         this.sampleTime = sampleTime;
     }
 
-    public double getTemperature() {
+    public Double getTemperature() {
         return temperature;
     }
 
@@ -65,7 +65,7 @@ public class SensorData {
         this.temperature = temperature;
     }
 
-    public double getRainfall() {
+    public Double getRainfall() {
         return rainfall;
     }
 
@@ -73,7 +73,7 @@ public class SensorData {
         this.rainfall = rainfall;
     }
 
-    public double getWindspeed() {
+    public Double getWindspeed() {
         return windspeed;
     }
 
@@ -81,12 +81,11 @@ public class SensorData {
         this.windspeed = windspeed;
     }
 
-    public double getHumidity() {
+    public Double getHumidity() {
         return humidity;
     }
 
     public void setHumidity(double humidity) {
         this.humidity = humidity;
     }
-
 }

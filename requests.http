@@ -7,11 +7,11 @@ POST http://localhost:8080/v1/weather/stats
 Content-Type: application/json
 
 {
-    "sensorIds" : [2],
-    "metrics" : ["TEMP", "WIND", "true"],
+    "metrics" : ["TEMPERATURE", "WINDSPEED"],
     "statType" : "AVG",
-    "startDate" : "2023-05-01",
-    "endDate" : "2023-06-30"
+    "searchAllSensors" : true,
+    "startDate" : "2023-06-01",
+    "endDate" : "2023-06-09"
 }
 
 
@@ -20,25 +20,30 @@ POST http://localhost:8080/v1/weather/metrics
 Content-Type: application/json
 
 {
-  "sampleId": 6,
+  "sampleId": 3,
   "sensorId": 2,
   "metrics": [{
-    "metricName": "BLAH",
-    "metricValue": 30.0
+    "metricType": "HUMIDITY",
+    "metricValue": 28.0
   }, {
-    "metricName": "TEMP",
-    "metricValue": 10
-  }, {
-    "metricName": "HUM",
-    "metricValue": 15.0
-  }, {
-    "metricName": "RAIN",
-    "metricValue": 10.0
-  }]
+    "metricType": "RAINFALL",
+    "metricValue": 44.0
+  },
+{
+"metricType": "TEMPERATURE",
+"metricValue": 25.0
+},
+{
+"metricType": "WINDSPEED",
+ "metricValue": 34.0
+}
+
+
+  ]
 }
 
 ### Get a metric sample by its ID
-GET http://localhost:8080/v1/weather/metrics/1
+GET http://localhost:8080/v1/weather/metrics/3
 Content-Type: application/json
 
 ### Get all metric samples
@@ -46,7 +51,7 @@ GET http://localhost:8080/v1/weather/metrics
 Content-Type: application/json
 
 ### Delete a metric sample by its ID
-DELETE http://localhost:8080/v1/weather/metrics/3
+DELETE http://localhost:8080/v1/weather/metrics/2
 Content-Type: application/json
 
 ### Update a metric sample
@@ -57,10 +62,10 @@ Content-Type: application/json
   "sampleId": 1,
   "sensorId": 2,
   "metrics": [{
-    "metricName": "HUM",
-    "metricValue": 30.0
+    "metricType": "HUMIDITY",
+    "metricValue": 300.0
   }, {
-    "metricName": "RAIN",
-    "metricValue": 40.0
+    "metricType": "RAINFALL",
+    "metricValue": 400.0
   }]
 }

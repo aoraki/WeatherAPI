@@ -2,15 +2,24 @@ package com.jk.WeatherAPI.dto;
 
 import com.jk.WeatherAPI.dto.enums.MetricType;
 import com.jk.WeatherAPI.dto.enums.StatType;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class StatsQueryRequestDTO {
     public final List<Long> sensorIds;
+
+    @NotNull
     public final List<MetricType> metrics;
+
+    @NotNull
     public final StatType statType;
+
     public final String startDate;
+
     public final String endDate;
+
     public final Boolean searchAllSensors;
 
     public StatsQueryRequestDTO(final List<Long> sensorIds, final List<MetricType> metrics, final StatType statType, final String startDate, final String endDate, final Boolean searchAllSensors) {

@@ -48,7 +48,7 @@ public class APIUtils {
                 .filter(metric -> metric.metricType.equals(metricType))
                 .map(metric -> metric.metricValue)
                 .findFirst()
-                .orElse(0.0);
+                .orElse(null);
     }
 
     public Date parseStartDate(final String startDateStr) {

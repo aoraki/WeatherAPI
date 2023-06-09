@@ -26,7 +26,7 @@ public class WeatherController {
      * However, I wanted to utilise a query object being passed in the payload of the request
      */
     @PostMapping("/stats")
-    public ResponseEntity<StatsQueryResponseDTO> getSensorMetrics(@RequestBody final StatsQueryRequestDTO statsQuery) {
+    public ResponseEntity<StatsQueryResponseDTO> queryMetrics(@RequestBody @Valid final StatsQueryRequestDTO statsQuery) {
         return ResponseEntity.ok(this.metricsService.getStats(statsQuery));
     }
 
