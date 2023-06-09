@@ -16,9 +16,9 @@ public class MetricDTO {
     }
 
     public MetricDTO getMetricByName(final List<MetricDTO> metricList, final MetricType metricType) {
-        for (MetricDTO obj : metricList) {
-            if (obj.metricType.equals(metricType)) {
-                return obj;
+        for (MetricDTO metricDTO : metricList) {
+            if (metricDTO.metricType.equals(metricType)) {
+                return metricDTO;
             }
         }
         return null;
@@ -32,11 +32,12 @@ public class MetricDTO {
                 '}';
     }
 
+    /*
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MetricDTO metricDTO = (MetricDTO) o;
         return Objects.equals(metricType, metricDTO.metricType);
-    }
+    }*/
 }

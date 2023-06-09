@@ -2,7 +2,6 @@ package com.jk.WeatherAPI.dto;
 
 import com.jk.WeatherAPI.dto.enums.MetricType;
 import com.jk.WeatherAPI.dto.enums.StatType;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
