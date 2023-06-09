@@ -24,22 +24,19 @@ Content-Type: application/json
   "sensorId": 2,
   "metrics": [{
     "metricType": "HUMIDITY",
-    "metricValue": 28.0
+    "metricValue": 228.0
   }, {
     "metricType": "RAINFALL",
-    "metricValue": 44.0
+    "metricValue": 244.0
   },
-{
-"metricType": "TEMPERATURE",
-"metricValue": 25.0
-},
-{
-"metricType": "WINDSPEED",
- "metricValue": 34.0
-}
-
-
-  ]
+  {
+    "metricType": "TEMPERATURE",
+    "metricValue": 225.0
+  },
+  {
+    "metricType": "WINDSPEED",
+    "metricValue": 234.0
+  }]
 }
 
 ### Get a metric sample by its ID
