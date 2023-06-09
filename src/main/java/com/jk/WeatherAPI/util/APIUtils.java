@@ -32,20 +32,20 @@ public class APIUtils {
 
     public SensorDataDTO convertSensorDataToDTO(final SensorData sensorData) {
         List<MetricDTO> metricDTOs = new ArrayList<>();
-        metricDTOs.add(this.generateMetricDTO(MetricType.TEMPERATURE.value, sensorData.getTemperature()));
-        metricDTOs.add(this.generateMetricDTO(MetricType.WINDSPEED.value, sensorData.getWindspeed()));
-        metricDTOs.add(this.generateMetricDTO(MetricType.HUMIDITY.value, sensorData.getHumidity()));
-        metricDTOs.add(this.generateMetricDTO(MetricType.RAINFALL.value, sensorData.getRainfall()));
+        metricDTOs.add(this.generateMetricDTO(MetricType.TEMPERATURE, sensorData.getTemperature()));
+        metricDTOs.add(this.generateMetricDTO(MetricType.WINDSPEED, sensorData.getWindspeed()));
+        metricDTOs.add(this.generateMetricDTO(MetricType.HUMIDITY, sensorData.getHumidity()));
+        metricDTOs.add(this.generateMetricDTO(MetricType.RAINFALL, sensorData.getRainfall()));
         return new SensorDataDTO(sensorData.getSampleId(), sensorData.getSensorId(), metricDTOs);
     }
 
-    private MetricDTO generateMetricDTO(final String metricName, final Double metricValue){
-        return new MetricDTO(metricName, metricValue);
+    private MetricDTO generateMetricDTO(final MetricType metricType, final Double metricValue){
+        return new MetricDTO(metricType, metricValue);
     }
 
     public Double getMetricValue(final SensorDataDTO sensorData, final MetricType metricType) {
         return sensorData.metrics.stream()
-                .filter(metric -> metric.metricName.equals(metricType.value))
+                .filter(metric -> metric.metricType.equals(metricType))
                 .map(metric -> metric.metricValue)
                 .findFirst()
                 .orElse(0.0);

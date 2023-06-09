@@ -55,7 +55,7 @@ public class WeatherController {
     }
 
     @PatchMapping("/metrics")
-    public ResponseEntity<SensorDataDTO> upateSample(@RequestBody final SensorDataDTO sensorData) {
+    public ResponseEntity<SensorDataDTO> upateSample(@RequestBody @Valid final SensorDataDTO sensorData) {
         final SensorDataDTO sensorDataDTO = metricsService.updateSample(sensorData);
         return new ResponseEntity(sensorDataDTO, HttpStatus.OK);
     }

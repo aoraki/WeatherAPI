@@ -1,32 +1,33 @@
 package com.jk.WeatherAPI.dto;
 
+import com.jk.WeatherAPI.dto.enums.MetricType;
+
 import java.util.List;
 import java.util.Objects;
 
 public class MetricDTO {
 
-    public final String metricName;
-    public final double metricValue;
+    public final MetricType metricType;
+    public final Double metricValue;
 
-    public MetricDTO(final String name, final double value) {
-        this.metricName = name;
+    public MetricDTO(final MetricType metricType, final Double value) {
+        this.metricType = metricType;
         this.metricValue = value;
     }
 
-    public MetricDTO getMetricByName(final List<MetricDTO> metricList, final String metricName) {
+    public MetricDTO getMetricByName(final List<MetricDTO> metricList, final MetricType metricType) {
         for (MetricDTO obj : metricList) {
-            if (obj.metricName == metricName) {
+            if (obj.metricType.equals(metricType)) {
                 return obj;
             }
         }
         return null;
     }
 
-
     @Override
     public String toString() {
         return "MetricDTO{" +
-                "name='" + metricName + '\'' +
+                "type='" + metricType + '\'' +
                 ", value=" + metricValue +
                 '}';
     }
@@ -36,6 +37,6 @@ public class MetricDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MetricDTO metricDTO = (MetricDTO) o;
-        return Objects.equals(metricName, metricDTO.metricName);
+        return Objects.equals(metricType, metricDTO.metricType);
     }
 }

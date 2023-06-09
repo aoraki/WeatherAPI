@@ -3,7 +3,6 @@ package com.jk.WeatherAPI.dto;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import java.util.List;
 
@@ -16,6 +15,7 @@ public class SensorDataDTO {
 
     @Valid
     @NotEmpty
+    @NotNull
     public final List<@Valid MetricDTO> metrics;
 
     public SensorDataDTO(final Long sampleId, final Long sensorId, final List<MetricDTO> metrics) {

@@ -18,13 +18,12 @@ public class TestUtils {
 
     private List<MetricDTO> generateMetricsDTO() {
         List<MetricDTO> metrics = new ArrayList<>();
-        metrics.add(new MetricDTO(MetricType.TEMPERATURE.value, 10.0));
-        metrics.add(new MetricDTO(MetricType.HUMIDITY.value, 20.0));
+        metrics.add(new MetricDTO(MetricType.TEMPERATURE, 10.0));
+        metrics.add(new MetricDTO(MetricType.HUMIDITY, 20.0));
         return metrics;
     }
 
     public SensorData generateSensorData(final Long sampleId, final Long sensorId, final Timestamp sampleTime, final double temperature, final double rainfall, final double windspeed, final double humidity){
         return new SensorData(sampleId, sensorId, sampleTime, temperature, rainfall, windspeed, humidity);
     }
-
 }

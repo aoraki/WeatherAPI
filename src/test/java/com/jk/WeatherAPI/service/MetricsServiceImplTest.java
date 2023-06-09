@@ -44,6 +44,7 @@ public class MetricsServiceImplTest {
         assertThat(samples.size()).isEqualTo(0);
     }
 
+
     @Test
     void getAllSamplesSuccess() {
         List<SensorData> sensorData = new ArrayList<>();
@@ -58,25 +59,25 @@ public class MetricsServiceImplTest {
         assertThat(samples.get(0).sampleId).isEqualTo(1);
         assertThat(samples.get(0).sensorId).isEqualTo(11);
         assertThat(samples.get(0).metrics.size()).isEqualTo(4);
-        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.TEMPERATURE.value).metricName).isEqualTo(MetricType.TEMPERATURE.value);
-        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.TEMPERATURE.value).metricValue).isEqualTo(10.0);
-        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.RAINFALL.value).metricName).isEqualTo(MetricType.RAINFALL.value);
-        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.RAINFALL.value).metricValue).isEqualTo(20.0);
-        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.WINDSPEED.value).metricName).isEqualTo(MetricType.WINDSPEED.value);
-        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.WINDSPEED.value).metricValue).isEqualTo(30.0);
-        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.HUMIDITY.value).metricName).isEqualTo(MetricType.HUMIDITY.value);
-        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.HUMIDITY.value).metricValue).isEqualTo(40.0);
+        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.TEMPERATURE).metricType).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.TEMPERATURE).metricValue).isEqualTo(10.0);
+        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.RAINFALL).metricType).isEqualTo(MetricType.RAINFALL);
+        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.RAINFALL).metricValue).isEqualTo(20.0);
+        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.WINDSPEED).metricType).isEqualTo(MetricType.WINDSPEED);
+        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.WINDSPEED).metricValue).isEqualTo(30.0);
+        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.HUMIDITY).metricType).isEqualTo(MetricType.HUMIDITY);
+        assertThat(samples.get(0).metrics.get(0).getMetricByName(samples.get(0).metrics, MetricType.HUMIDITY).metricValue).isEqualTo(40.0);
         assertThat(samples.get(1).sampleId).isEqualTo(2);
         assertThat(samples.get(1).sensorId).isEqualTo(22);
         assertThat(samples.get(1).metrics.size()).isEqualTo(4);
-        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.TEMPERATURE.value).metricName).isEqualTo(MetricType.TEMPERATURE.value);
-        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.TEMPERATURE.value).metricValue).isEqualTo(101.0);
-        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.RAINFALL.value).metricName).isEqualTo(MetricType.RAINFALL.value);
-        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.RAINFALL.value).metricValue).isEqualTo(202.0);
-        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.WINDSPEED.value).metricName).isEqualTo(MetricType.WINDSPEED.value);
-        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.WINDSPEED.value).metricValue).isEqualTo(303.0);
-        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.HUMIDITY.value).metricName).isEqualTo(MetricType.HUMIDITY.value);
-        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.HUMIDITY.value).metricValue).isEqualTo(404.0);
+        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.TEMPERATURE).metricType).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.TEMPERATURE).metricValue).isEqualTo(101.0);
+        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.RAINFALL).metricType).isEqualTo(MetricType.RAINFALL);
+        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.RAINFALL).metricValue).isEqualTo(202.0);
+        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.WINDSPEED).metricType).isEqualTo(MetricType.WINDSPEED);
+        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.WINDSPEED).metricValue).isEqualTo(303.0);
+        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.HUMIDITY).metricType).isEqualTo(MetricType.HUMIDITY);
+        assertThat(samples.get(1).metrics.get(1).getMetricByName(samples.get(1).metrics, MetricType.HUMIDITY).metricValue).isEqualTo(404.0);
     }
 
     @Test
@@ -99,16 +100,16 @@ public class MetricsServiceImplTest {
         assertThat(sensorDataDTO.sampleId).isEqualTo(1);
         assertThat(sensorDataDTO.sensorId).isEqualTo(11);
         assertThat(sensorDataDTO.metrics.size()).isEqualTo(4);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE.value).metricName).isEqualTo(MetricType.TEMPERATURE.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE.value).metricValue).isEqualTo(10.0);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL.value).metricName).isEqualTo(MetricType.RAINFALL.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL.value).metricValue).isEqualTo(20.0);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED.value).metricName).isEqualTo(MetricType.WINDSPEED.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED.value).metricValue).isEqualTo(30.0);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY.value).metricName).isEqualTo(MetricType.HUMIDITY.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY.value).metricValue).isEqualTo(40.0);
-
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE).metricType).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE).metricValue).isEqualTo(10.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL).metricType).isEqualTo(MetricType.RAINFALL);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL).metricValue).isEqualTo(20.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED).metricType).isEqualTo(MetricType.WINDSPEED);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED).metricValue).isEqualTo(30.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY).metricType).isEqualTo(MetricType.HUMIDITY);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY).metricValue).isEqualTo(40.0);
     }
+
 
     @Test
     void createSampleSuccess() {
@@ -121,14 +122,14 @@ public class MetricsServiceImplTest {
         assertThat(sensorDataDTO.sampleId).isEqualTo(1);
         assertThat(sensorDataDTO.sensorId).isEqualTo(11);
         assertThat(sensorDataDTO.metrics.size()).isEqualTo(4);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE.value).metricName).isEqualTo(MetricType.TEMPERATURE.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE.value).metricValue).isEqualTo(10.0);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL.value).metricName).isEqualTo(MetricType.RAINFALL.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL.value).metricValue).isEqualTo(0.0);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED.value).metricName).isEqualTo(MetricType.WINDSPEED.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED.value).metricValue).isEqualTo(0.0);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY.value).metricName).isEqualTo(MetricType.HUMIDITY.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY.value).metricValue).isEqualTo(20.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE).metricType).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE).metricValue).isEqualTo(10.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL).metricType).isEqualTo(MetricType.RAINFALL);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL).metricValue).isEqualTo(0.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED).metricType).isEqualTo(MetricType.WINDSPEED);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED).metricValue).isEqualTo(0.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY).metricType).isEqualTo(MetricType.HUMIDITY);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY).metricValue).isEqualTo(20.0);
     }
 
     @Test
@@ -144,6 +145,7 @@ public class MetricsServiceImplTest {
         assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.CONFLICT);
     }
 
+
     @Test
     void updateSampleSuccess() {
         final SensorData existingSensorData = testUtils.generateSensorData(1L, 11L, null, 10.0, 0.0, 0.0, 20.0);
@@ -154,14 +156,14 @@ public class MetricsServiceImplTest {
         assertThat(sensorDataDTO.sampleId).isEqualTo(1);
         assertThat(sensorDataDTO.sensorId).isEqualTo(111);
         assertThat(sensorDataDTO.metrics.size()).isEqualTo(4);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE.value).metricName).isEqualTo(MetricType.TEMPERATURE.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE.value).metricValue).isEqualTo(10.0);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL.value).metricName).isEqualTo(MetricType.RAINFALL.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL.value).metricValue).isEqualTo(0.0);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED.value).metricName).isEqualTo(MetricType.WINDSPEED.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED.value).metricValue).isEqualTo(0.0);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY.value).metricName).isEqualTo(MetricType.HUMIDITY.value);
-        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY.value).metricValue).isEqualTo(20.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE).metricType).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.TEMPERATURE).metricValue).isEqualTo(10.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL).metricType).isEqualTo(MetricType.RAINFALL);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.RAINFALL).metricValue).isEqualTo(0.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED).metricType).isEqualTo(MetricType.WINDSPEED);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.WINDSPEED).metricValue).isEqualTo(0.0);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY).metricType).isEqualTo(MetricType.HUMIDITY);
+        assertThat(sensorDataDTO.metrics.get(0).getMetricByName(sensorDataDTO.metrics, MetricType.HUMIDITY).metricValue).isEqualTo(20.0);
     }
 
     @Test

@@ -47,6 +47,11 @@ public class MetricsServiceImpl implements MetricsService {
     @Override
     public SensorDataDTO createSample(final SensorDataDTO sensorDataDTO) {
         logger.info("Attempting to create a metric sample with sample Id : {}", sensorDataDTO.sampleId);
+
+        if(!isValidMetrics(sensorDataDTO)){
+            throw new AppException(400, "Bad Request");
+        }
+
         sensorDataRepo.findBySampleId(sensorDataDTO.sampleId)
             .ifPresent(data -> {
                 throw new AppException(409, "A sample with sampleId " + sensorDataDTO.sampleId + " already exists");
@@ -66,6 +71,10 @@ public class MetricsServiceImpl implements MetricsService {
     @Override
     public SensorDataDTO updateSample(final SensorDataDTO sensorDataDTO) {
         logger.info("Attempting to update a metric sample with sample Id : {}", sensorDataDTO.sampleId);
+
+        if(!isValidMetrics(sensorDataDTO)){
+            throw new AppException(400, "Bad Request");
+        }
 
         return sensorDataRepo.findBySampleId(sensorDataDTO.sampleId)
             .map(existing -> {
@@ -102,6 +111,11 @@ public class MetricsServiceImpl implements MetricsService {
         return sensorDataRepo.findAll().stream()
                 .map(apiUtils::convertSensorDataToDTO)
                 .collect(Collectors.toList());
+    }
+
+    private boolean isValidMetrics(SensorDataDTO sensorDataDTO) {
+        return sensorDataDTO.metrics.stream()
+                .allMatch(metric -> metric.metricType != null && metric.metricValue != null);
     }
 
     private Double retrieveMetricValue(final List<Long> sensorIds, final MetricType metricType, final StatType statType, final Date startDate, final Date endDate, final boolean searchAllSensors) {
