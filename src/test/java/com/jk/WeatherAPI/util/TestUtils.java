@@ -16,6 +16,18 @@ public class TestUtils {
         return new SensorDataDTO(sampleId, sensorId, metrics);
     }
 
+    public SensorDataDTO generateInvalidSensorDataDTO(final Long sampleId, final Long sensorId) {
+        List<MetricDTO> metrics = generateInvalidMetricsDTO();
+        return new SensorDataDTO(sampleId, sensorId, metrics);
+    }
+
+    private List<MetricDTO> generateInvalidMetricsDTO() {
+        List<MetricDTO> metrics = new ArrayList<>();
+        metrics.add(new MetricDTO(null, 10.0));
+        metrics.add(new MetricDTO(MetricType.HUMIDITY, null));
+        return metrics;
+    }
+
     private List<MetricDTO> generateMetricsDTO() {
         List<MetricDTO> metrics = new ArrayList<>();
         metrics.add(new MetricDTO(MetricType.TEMPERATURE, 10.0));

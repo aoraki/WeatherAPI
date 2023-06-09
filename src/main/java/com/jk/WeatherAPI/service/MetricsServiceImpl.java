@@ -96,11 +96,8 @@ public class MetricsServiceImpl implements MetricsService {
 
         Optional<SensorData> sensorDataEntity = Optional.ofNullable(sensorDataRepo.findBySampleId(sampleId)
                 .orElseThrow(() -> new AppException(404, "Cannot find Sample with sample Id " + sampleId)));
-        try {
-            sensorDataRepo.delete(sensorDataEntity.get());
-        } catch (Exception ex) {
-            throw new AppException(500, "Unexpected error encountered deleting Metric Sample with sampleId " + sampleId);
-        }
+
+        sensorDataRepo.delete(sensorDataEntity.get());
         return true;
     }
 

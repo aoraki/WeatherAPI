@@ -145,6 +145,16 @@ public class MetricsServiceImplTest {
         assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.CONFLICT);
     }
 
+    @Test
+    void createSampleInvalidInputMetrics() {
+        AppException exception = Assertions.assertThrows(AppException.class, () -> {
+            metricsService.createSample(testUtils.generateInvalidSensorDataDTO(1L, 11L));
+        });
+
+        assertThat(exception.getErrorMessage()).isEqualTo("Bad Request");
+        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
 
     @Test
     void updateSampleSuccess() {
@@ -179,6 +189,16 @@ public class MetricsServiceImplTest {
     }
 
     @Test
+    void upateSampleInvalidInputMetrics() {
+        AppException exception = Assertions.assertThrows(AppException.class, () -> {
+            metricsService.updateSample(testUtils.generateInvalidSensorDataDTO(1L, 11L));
+        });
+
+        assertThat(exception.getErrorMessage()).isEqualTo("Bad Request");
+        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
     void deleteSampleNotFound() {
         given(sensorDateRepository.findBySampleId(1L)).willReturn(Optional.empty());
 
@@ -197,21 +217,4 @@ public class MetricsServiceImplTest {
         boolean response = metricsService.deleteSample(1L);
         assertThat(response).isTrue();
     }
-
-    /*
-    @Test
-    void deleteSampleUnexpectedError() {
-        final SensorData existingSensorData = testUtils.generateSensorData(1L, 11L, null, 10.0, 0.0, 0.0, 20.0);
-        given(sensorDateRepository.findBySampleId(1L)).willReturn(Optional.of(existingSensorData));
-        doThrow(new Exception("DB Does not exist"))
-                .when(sensorDateRepository)
-                .delete(any());
-
-        AppException exception = Assertions.assertThrows(AppException.class, () -> {
-            metricsService.deleteSample(1L);
-        });
-
-        assertThat(exception.getErrorMessage()).isEqualTo("Unexpected error encountered deleting Metric Sample with sampleId 1");
-        assertThat(exception.getHttpStatus()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    }*/
 }
