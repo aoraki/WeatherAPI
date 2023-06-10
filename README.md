@@ -1,7 +1,7 @@
 # WeatherAPI Rest Service
 
 ### Overview
-This application is a REST API.  The WeatherAPI is designed to accept readings from multiple weather sensors for various weather metrics such as temperature, rainfall, windspeed, etc.  The sensor reading data is kept in a persistent store and using the WeatherAPI, queries can be made against the sensor data.  A query might take the form of "give me the average windspeed for sensor 1 in the last week".
+The WeatherAPI is a RESTful API designed to accept readings from multiple weather sensors for various weather metrics such as temperature, rainfall, windspeed, etc.  The sensor reading data is kept in a persistent store and using the WeatherAPI, queries can be made against the sensor data.  A query might take the form of "give me the average windspeed for sensor 1 in the last week".
 
 ### Pre-requisites
 * Git (For cloning purposes)
@@ -59,7 +59,10 @@ Once the WeatherAPI app is running there are a few different ways you can make r
 * If you don't provide a data range in the query request the server will use the current day as the date range (this constitutes the "latest data" stipulation in the assignment brief).
 * Although the spec didn't call for it, I provided CRUD endpoints for the records held in the sensor data DB.  The query endpoint allows you make nuanced queries against the data held in the DB, whereas the CRUD endpoints are just standard endpoints to allow you to manipulate the raw data held in the DB.
 
-### Database Schema
+### Database Considerations
+
+#### Schema
+
 With the above assumptions in mind, I chose a very basic DB schema with just one table called `sensor_data`.  I could have split it into separate tables for each metric type, but for the purposes of this exercise I just wanted to keep it really simple.
 
 |FIELD|TYPE|NULL|KEY|DEFAULT|
@@ -71,6 +74,11 @@ With the above assumptions in mind, I chose a very basic DB schema with just one
 |RAINFALL|DOUBLE PRECISION|YES||NULL|
 |TEMPERATURE|DOUBLE PRECISION|YES||NULL|
 |WINDSPEED|DOUBLE PRECISION|YES||NULL|
+
+#### Pre-loaded Data
+The embedded H2 databaseWeatherAPI app comes with some pre-loaded data so that the user has some data to play with when they start up the WeatherAPI.  There are 50 records loaded, randomized across sensor ids 1 to 10.  The date range of these records ranges between 2023-05-08 and 2023-06-10 (using yyyy-MM-dd)
+
+
 
 ### REST API Endpoints
 ### Sumbit Metrics
