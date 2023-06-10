@@ -15,12 +15,12 @@ git clone https://github.com/aoraki/WeatherAPI.git
 
 ### Tech Stack Overview
 
-**Language** : Java 11.0.12
-**IDE** : IntelliJ Ultimate Edition.
-**Build Tool** : Gradle Wrapper 7.6.1
-**Web Container** : Tomcat (built into Spring Boot)
-**Frameworks** : Spring Boot (2.7.12), Spring Boot Starter JPA, Spring Boot Web, Spring Boot Actuator, Spring Boot Validation, Springdoc OpenAPI, Spring Boot Starter Test.
-**Persistence** : H2 Database (built into Spring Boot)
+* **Language** : Java 11.0.12
+* **IDE** : IntelliJ Ultimate Edition.
+* **Build Tool** : Gradle Wrapper 7.6.1
+* **Web Container** : Tomcat (built into Spring Boot)
+* **Frameworks** : Spring Boot (2.7.12), Spring Boot Starter JPA, Spring Boot Web, Spring Boot Actuator, Spring Boot Validation, Springdoc OpenAPI, Spring Boot Starter Test.
+* **Persistence** : H2 Database (built into Spring Boot)
 
 Java 11 was used mainly for convenience purely because it was the version of Java that I had installed on my machine.  This dictated the version of Spring Boot I could use.  For the data access layer and persistence I went with Spring Boot JPA and H2 as the DB.  Again these were the most convenient to use and made sense for a POC project of this nature where there were time constraints.
 
@@ -46,7 +46,7 @@ java -jar build/libs/WeatherAPI-0.0.1-SNAPSHOT.jar
 Once the WeatherAPI app is running there are a few different ways you can make requests against it;
 
 1. For IntelliJ you can use the IntelliJ http client.  A `requests.http` file has been provided in the root folder of the repo, and in it are test requests for each of the endpoints in the WeatherAPI app.
-2. Using a tool like Postman.
+2. Using a tool like Postman.  A public Postman collection for this API has been created and is available here; [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/418365-22c42c67-b89a-4a74-9eb5-d057c34698fc?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D418365-22c42c67-b89a-4a74-9eb5-d057c34698fc%26entityType%3Dcollection%26workspaceId%3Da1cbb799-e74c-49a3-9316-f66e87deab3f)
 3. Using cURL (for purists only!)
 4. Using Swagger (see below for the URL)
 
