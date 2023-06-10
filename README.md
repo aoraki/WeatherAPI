@@ -57,9 +57,10 @@ Once the WeatherAPI app is running there are a few different ways you can make r
 * Each submission of data to the server will come with a unique sampleId which is supplied by the sensor and is part of the data payload to the server.
 * When querying collected data, you specify the metrics you want to query (you can base your query for a single metric, or for all 4 of them), the statistic type you want to apply to the data (avg, min, max etc) and a data range.  You can also narrow your query to certain sensors, or you can query for all sensors.
 * If you don't provide a data range in the query request the server will use the current day as the date range (this constitutes the "latest data" stipulation in the assignment brief).
+* Although the spec didn't call for it, I provided CRUD endpoints for the records held in the sensor data DB.  The query endpoint allows you make nuanced queries against the data held in the DB, whereas the CRUD endpoints are just standard endpoints to allow you to manipulate the raw data held in the DB.
 
 ### Database Schema
-With the above assumptions in mind, I chose a very basic DB schema with just one table called `sensor_data`.
+With the above assumptions in mind, I chose a very basic DB schema with just one table called `sensor_data`.  I could have split it into separate tables for each metric type, but for the purposes of this exercise I just wanted to keep it really simple.
 
 |FIELD|TYPE|NULL|KEY|DEFAULT|
 |--|--|--|--|--|
@@ -72,6 +73,335 @@ With the above assumptions in mind, I chose a very basic DB schema with just one
 |WINDSPEED|DOUBLE PRECISION|YES||NULL|
 
 ### REST API Endpoints
+### Sumbit Metrics
+Endpoint for submitting a sensor reading to the WeatherAPI
+#### Sample Request
+```
+POST http://localhost:8080/v1/weather/metrics  
+Content-Type: application/json  
+  
+{
+	"sampleId": 3,
+	"sensorId": 2,
+	"metrics": [{
+		"metricType": "HUMIDITY",
+		"metricValue": 14.0
+	}, {
+		"metricType": "RAINFALL",
+		"metricValue": 18.0
+	}, {
+		"metricType": "TEMPERATURE",
+		"metricValue": 22.0
+	}, {
+		"metricType": "WINDSPEED",
+		"metricValue": 10.0
+	}]
+}
+```
+For the data submission payload, sampleId, sensorId and metrics are required.  Sample Id must be unique for each submission.  The metrics list must have at least 1 metric entry present, the metricType must be one of the 4 enumerated types shown above, and the value must be compatible with a double type.
+
+#### Sample Response
+```
+HTTP / 1.1 201
+Content - Type: application / json
+
+{
+	"sampleId": 3,
+	"sensorId": 2,
+	"metrics": [{
+			"metricType": "TEMPERATURE",
+			"metricValue": 22.0
+		},
+		{
+			"metricType": "WINDSPEED",
+			"metricValue": 10.0
+		},
+		{
+			"metricType": "HUMIDITY",
+			"metricValue": 14.0
+		},
+		{
+			"metricType": "RAINFALL",
+			"metricValue": 18.0
+		}
+	]
+}
+```
+Will return a 201 for successfully created, with a response payload representing the row of data held in the DB for that reading.  If the reading has a sampleId that has already been used, a 409 conflict will be returned.
+
+In my design I allowed for a scenario where a sensor can submit data for just 1 or 2 metrics, and not for all 4 metrics.  In that case the record in the DB will store the metrics that it received data for, and will store null for the metrics that it didn't get data for.  In the below sample it shows what you would get back if you submitted a reading with just 2 of the metrics;
+
+```
+HTTP/1.1 201 
+Content-Type: application/json
+
+{
+  "sampleId": 5,
+  "sensorId": 2,
+  "metrics": [
+    {
+      "metricType": "TEMPERATURE",
+      "metricValue": null
+    },
+    {
+      "metricType": "WINDSPEED",
+      "metricValue": null
+    },
+    {
+      "metricType": "HUMIDITY",
+      "metricValue": 7.0
+    },
+    {
+      "metricType": "RAINFALL",
+      "metricValue": 14.0
+    }
+  ]
+}
+```
+As you can see, for the metrics that we didn't get data for, a value of null is returned.
+
+### Perform complex query of historical sensor data
+You can make queries against the sensor data to obtained certain rolled up information over a date range.  You can specify 1 to many sensors in your query (or all of them).
+
+#### Sample Request
+```
+POST http://localhost:8080/v1/weather/stats  
+Content-Type: application/json  
+  
+{
+	"metrics": ["TEMPERATURE", "WINDSPEED"],
+	"sensorIds": [4, 5],
+	"statType": "AVG",
+	"startDate": "2023-06-01",
+	"endDate": "2023-06-09"
+}
+```
+A POST may seem a bit odd for a REST call to retrieve data.  However, because the queries can carry a certain level of complexity, I decided to use a request query object to be sent in the payload of the request, rather than passing them in as path parameters.
+
+For example, the above query can be vocalised as "Return the Average Temperature and Windspeed for sensors 4 and 5 between the 1st June and the 9th June 2023"
+
+Another example would be;
+```
+POST http://localhost:8080/v1/weather/stats  
+Content-Type: application/json  
+  
+{
+	"metrics": ["TEMPERATURE", "WINDSPEED"],
+	"searchAllSensors": true,
+	"statType": "MAX"
+}
+```
+which could be read as "Return the Max values for both Temperature and Windspeed for all Sensors over the current day" (it defaults to the data for the current day if you don't pass in a date range)
+
+The following validation rules apply to the various fields of the query object;
+* **metrics** : The weather metrics you are querying for.  This field must be present as a list in the payload, and the list must contain atleast 1 of the 4 enumerated metric types (TEMPERATURE, WINDSPEED, RAINFALL, HUMIDITY).  If the metrics list contains a junk value the API will return with a 400 Bad Request.
+* **statType** : Must be present.  The statistic type should be one of the 4 enumerated statistic types (AVG, MIN, MAX, SUM).  If it's a junk value the API will return a 400.
+* **sensorIds** : Can be used to specify specific sensors to query data for.  If the sensor ids are junk values (eg. non numerical) the API will return with a 400 Bad Request.  If the sensorIds field is not provided, then the searchAllSensors flag must be provided (see below), otherwise a 400 bad request will ensue.
+* **searchAllSensors** : This flag can be provided (with a value set to true) to stipulate that you want to query data over all sensors. If both sensorIds and searchAllSensors is present in the payload, the searchAllSensors field will take precedence.
+* **startDate** and **endDate** : The format of both date fields is "**yyyy-MM-dd**".  Can be provided to specify a date range to perform the search across.  startDate must be before or on the same day as endDate.  endDate cannot be a date in the future.  If you provide either one of the fields you must provide the other, otherwise a 400 Bad Request will occur.  startDate and endDate is inclusive, eg. if you provide a startDate of 2023-06-01 and an endDate of 2023-06-10 the server will assume the following in the back end;
+```
+startDate : 2023-06-01 00:00:00
+endDate : 2023-06-11 00:00:00   
+```
+**Alternatively you can leave out both date fields, and if you do so the server will perform the query assuming that the data range is the current day.  This is probably the best way to test the API as when it starts up there won't be any historical data to work with.**
+
+#### Sample Response
+```
+POST http://localhost:8080/v1/weather/stats
+
+HTTP/1.1 200 
+Content-Type: application/json
+
+{
+  "metricResponses": [
+    {
+      "metric": "TEMPERATURE",
+      "statType": "AVG",
+      "metricValue": 20.0
+    },
+    {
+      "metric": "WINDSPEED",
+      "statType": "AVG",
+      "metricValue": 10.0
+    }
+  ]
+}
+```
+If the criteria specified in the query fails to find any data, a null value will be returned to signify the absence of data.  I felt this was more appropriate than a 404 as you could have a situation where you are looking for data for 2 metrics, and there is data for one but not the other.
+
+### Get Sensor reading by it's sample ID
+You can retrieve individual sensor readings from the database, using the unique sampleId associated with the reading.
+#### Sample Request
+```
+GET http://localhost:8080/v1/weather/metrics/3  
+Content-Type: application/json
+```
+You pass in the sampleId as a path parameter.
+
+#### Sample Response
+```
+HTTP/1.1 200 
+Content-Type: application/json
+
+{
+  "sampleId": 3,
+  "sensorId": 2,
+  "metrics": [
+    {
+      "metricType": "TEMPERATURE",
+      "metricValue": 22.0
+    },
+    {
+      "metricType": "WINDSPEED",
+      "metricValue": 10.0
+    },
+    {
+      "metricType": "HUMIDITY",
+      "metricValue": 14.0
+    },
+    {
+      "metricType": "RAINFALL",
+      "metricValue": 18.0
+    }
+  ]
+}
+```
+The API will return a 404 not found if a reading for the sampleId provided cannot be found.
+
+### Get All Sensor Readings
+You can retrieve all sensor readings from the DB
+
+#### Sample Request
+```
+GET http://localhost:8080/v1/weather/metrics  
+Content-Type: application/json
+```
+
+#### Sample Response
+```
+HTTP/1.1 200 
+Content-Type: application/json
+
+[
+  {
+    "sampleId": 3,
+    "sensorId": 2,
+    "metrics": [
+      {
+        "metricType": "TEMPERATURE",
+        "metricValue": 22.0
+      },
+      {
+        "metricType": "WINDSPEED",
+        "metricValue": 10.0
+      },
+      {
+        "metricType": "HUMIDITY",
+        "metricValue": 14.0
+      },
+      {
+        "metricType": "RAINFALL",
+        "metricValue": 18.0
+      }
+    ]
+  },
+  {
+    "sampleId": 4,
+    "sensorId": 2,
+    "metrics": [
+      {
+        "metricType": "TEMPERATURE",
+        "metricValue": 20.0
+      },
+      {
+        "metricType": "WINDSPEED",
+        "metricValue": 10.0
+      },
+      {
+        "metricType": "HUMIDITY",
+        "metricValue": 7.0
+      },
+      {
+        "metricType": "RAINFALL",
+        "metricValue": 14.0
+      }
+    ]
+  }
+]
+```
+The API will return an empty list if there are no readings in the DB.
+
+### Update a Sensor Reading
+You can update an individual sensor reading in the DB
+
+#### Sample Request
+```
+PATCH http://localhost:8080/v1/weather/metrics  
+Content-Type: application/json  
+  
+{
+	"sampleId": 1,
+	"sensorId": 2,
+	"metrics": [{
+		"metricType": "HUMIDITY",
+		"metricValue": 10.0
+	}, {
+		"metricType": "RAINFALL",
+		"metricValue": 150.0
+	}]
+}
+```
+Please note that is a PATCH request, meaning that you can do a partial update of the metric data held for that particular reading.
+
+#### Sample Response
+```
+HTTP/1.1 200 
+Content-Type: application/json
+
+{
+  "sampleId": 3,
+  "sensorId": 2,
+  "metrics": [
+    {
+      "metricType": "TEMPERATURE",
+      "metricValue": 22.0
+    },
+    {
+      "metricType": "WINDSPEED",
+      "metricValue": 10.0
+    },
+    {
+      "metricType": "HUMIDITY",
+      "metricValue": 10.0
+    },
+    {
+      "metricType": "RAINFALL",
+      "metricValue": 150.0
+    }
+  ]
+}
+```
+The API will return a 404 if it can't find the record you are trying to update
+
+
+### Delete a Sensor Reading
+You can delete an individual sensor reading in the DB using it's sampleId
+
+#### Sample Request
+```
+DELETE http://localhost:8080/v1/weather/metrics/2  
+Content-Type: application/json
+```
+Please note that is a PATCH request, meaning that you can do a partial update of the metric data held for that particular reading.
+
+#### Sample Response
+```
+HTTP/1.1 200 
+Content-Type: application/json
+
+true
+```
+The API will return a 404 if it can't find the record you are trying to delete.  Otherwise it will return a 200 with a simple payload of "true"
 
 #### To view Swagger 3 API docs
 Swagger has been enabled for the project.  To access the swagger UI, run the server and browse to http://localhost:8080/swagger-ui.html
@@ -82,8 +412,10 @@ The database used for this project is the embedded H2 database that comes with S
 Usr : sa
 Pwd : Password
 ```
-If you want
-
+A sample query to run would be;
+```
+SELECT * from SENSOR_DATA
+```
 ### Optional Docker Support
 
 **NB!** This requires that you have Docker locally installed on your machine.   A docker file has been provided in the repo which outlines a virtualized runtime to run a Java 11 REST application, exposing the port 8080 to the outside world.  The Dockerfile is located in the root of the code repository.
@@ -130,27 +462,3 @@ The following are some common steps you would take if you were to take this basi
 * Separate environments for Dev, Test and Prod
 * Security.  Using TLS with a proper rooted certificate and consider the use of OAuth Token based Authentication/Authorization.  Any secrets or sensitive information within the application need to be externalized and read in at runtime/deploy time from a secure location (such as Hashicorp Vault or AWS Secrets Manager)
 * Use of a DB Schema management tool such as Flyway or Liquibase.  Build it into the CI/CD pipeline.
-
-
-
-Sensor data submission example payload
-```
-{
-	"sampleId": 3,
-	"sensorId": 2,
-	"metrics": [{
-		"metricType": "HUMIDITY",
-		"metricValue": 14.0
-	}, {
-		"metricType": "RAINFALL",
-		"metricValue": 18.0
-	}, {
-		"metricType": "TEMPERATURE",
-		"metricValue": 22.0
-	}, {
-		"metricType": "WINDSPEED",
-		"metricValue": 10.0
-	}]
-}
-```
-For the data submission payload, all three attributes are required.  Sample Id must be unique for each submission.  The metrics list must have at least 1 metric entry, the metricType must be one of the 4 enumerated types shown above, and the value must be compatible with a double type.  
