@@ -24,18 +24,18 @@ Content-Type: application/json
   "sensorId": 2,
   "metrics": [{
     "metricType": "HUMIDITY",
-    "metricValue": 228.0
+    "metricValue": 14.0
   }, {
     "metricType": "RAINFALL",
-    "metricValue": 244.0
+    "metricValue": 18.0
   },
   {
     "metricType": "TEMPERATURE",
-    "metricValue": 225.0
+    "metricValue": 22.0
   },
   {
     "metricType": "WINDSPEED",
-    "metricValue": 234.0
+    "metricValue": 10.0
   }]
 }
 
