@@ -58,6 +58,19 @@ Once the WeatherAPI app is running there are a few different ways you can make r
 * When querying collected data, you specify the metrics you want to query (you can base your query for a single metric, or for all 4 of them), the statistic type you want to apply to the data (avg, min, max etc) and a data range.  You can also narrow your query to certain sensors, or you can query for all sensors.
 * If you don't provide a data range in the query request the server will use the current day as the date range (this constitutes the "latest data" stipulation in the assignment brief).
 
+### Database Schema
+With the above assumptions in mind, I chose a very basic DB schema with just one table called `sensor_data`.
+
+|FIELD|TYPE|NULL|KEY|DEFAULT|
+|--|--|--|--|--|
+|ID|BIGINT|NO|PRI|NULL|
+|SAMPLE_ID|BIGINT|NO|UNI|NULL|
+|SAMPLE_TIME|TIMESTAMP|YES||NULL|
+|HUMIDITY|DOUBLE PRECISION|YES||NULL|
+|RAINFALL|DOUBLE PRECISION|YES||NULL|
+|TEMPERATURE|DOUBLE PRECISION|YES||NULL|
+|WINDSPEED|DOUBLE PRECISION|YES||NULL|
+
 ### REST API Endpoints
 
 #### To view Swagger 3 API docs
@@ -140,8 +153,4 @@ Sensor data submission example payload
 	}]
 }
 ```
-For the data submission payload, all three attributes are required.  Sample Id must be unique for each submission.  The metrics list must have at least 1 metric entry, the metricType must be one of the 4 enumerated types shown above, and the value must be compatible with a double type.
-
-
-Database Schema
-With the above assumptions in mind, I chose a very basic DB schema with just one table called `sensor_data`.
+For the data submission payload, all three attributes are required.  Sample Id must be unique for each submission.  The metrics list must have at least 1 metric entry, the metricType must be one of the 4 enumerated types shown above, and the value must be compatible with a double type.  
