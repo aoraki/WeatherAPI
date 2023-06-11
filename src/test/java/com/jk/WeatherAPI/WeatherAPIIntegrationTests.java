@@ -1,6 +1,5 @@
 package com.jk.WeatherAPI;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jk.WeatherAPI.dto.SensorDataDTO;
 import com.jk.WeatherAPI.dto.StatsQueryRequestDTO;
 import com.jk.WeatherAPI.dto.StatsQueryResponseDTO;
@@ -93,34 +92,124 @@ public class WeatherAPIIntegrationTests {
     }
 
     @Test
-    void queryMetricsSuccessAverageStats(){
+    void queryMetricsSuccessAverageStatsOne(){
         final StatsQueryRequestDTO statsQueryRequestDTO = testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L), StatType.AVG, false, true, false, false, false, "2023-05-01", "2023-05-30");
 
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<StatsQueryRequestDTO> requestEntity = new HttpEntity<>(statsQueryRequestDTO, headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        final ResponseEntity<StatsQueryResponseDTO> response = restTemplate.postForEntity(
                 "/v1/weather/stats",
-                HttpMethod.POST,
                 requestEntity,
-                String.class
+                StatsQueryResponseDTO.class
         );
+
+        final StatsQueryResponseDTO statsQueryResponseDTO = response.getBody();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            String responseBody = response.getBody();
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                StatsQueryResponseDTO statsResponse = objectMapper.readValue(responseBody, StatsQueryResponseDTO.class);
-                assertThat(statsResponse.metricResponses.size()).isEqualTo(1);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("POST request failed");
-        }
+        assertThat(statsQueryResponseDTO.metricResponses.size()).isEqualTo(1);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(32.0);
     }
 
+    @Test
+    void queryMetricsSuccessAverageStatsTwo(){
+        final StatsQueryRequestDTO statsQueryRequestDTO = testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L), StatType.AVG, false, false, true, true, false, "2023-05-01", "2023-06-10");
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<StatsQueryRequestDTO> requestEntity = new HttpEntity<>(statsQueryRequestDTO, headers);
+
+        final ResponseEntity<StatsQueryResponseDTO> response = restTemplate.postForEntity(
+                "/v1/weather/stats",
+                requestEntity,
+                StatsQueryResponseDTO.class
+        );
+
+        final StatsQueryResponseDTO statsQueryResponseDTO = response.getBody();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(statsQueryResponseDTO.metricResponses.size()).isEqualTo(2);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(42.0);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(37.0);
+    }
+
+
+    @Test
+    void queryMetricsSuccessMinimumStatsOne(){
+        final StatsQueryRequestDTO statsQueryRequestDTO = testUtils.generateStatsQueryRequestDTO(Arrays.asList(2L,3L), StatType.MIN, false, true, false, true, true, "2023-05-01", "2023-06-03");
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<StatsQueryRequestDTO> requestEntity = new HttpEntity<>(statsQueryRequestDTO, headers);
+
+        final ResponseEntity<StatsQueryResponseDTO> response = restTemplate.postForEntity(
+                "/v1/weather/stats",
+                requestEntity,
+                StatsQueryResponseDTO.class
+        );
+
+        final StatsQueryResponseDTO statsQueryResponseDTO = response.getBody();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(statsQueryResponseDTO.metricResponses.size()).isEqualTo(3);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(52.0);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(12.0);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(22.0);
+    }
+
+    @Test
+    void queryMetricsSuccessMinimumStatsTwo(){
+        final StatsQueryRequestDTO statsQueryRequestDTO = testUtils.generateStatsQueryRequestDTO(null, StatType.MIN, true, true, false, false, true, null, null);
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<StatsQueryRequestDTO> requestEntity = new HttpEntity<>(statsQueryRequestDTO, headers);
+
+        final ResponseEntity<StatsQueryResponseDTO> response = restTemplate.postForEntity(
+                "/v1/weather/stats",
+                requestEntity,
+                StatsQueryResponseDTO.class
+        );
+
+        final StatsQueryResponseDTO statsQueryResponseDTO = response.getBody();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(statsQueryResponseDTO.metricResponses.size()).isEqualTo(2);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(20.0);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(18.0);
+    }
+
+    @Test
+    void queryMetricsSuccessMaximumStatsOne(){
+        final StatsQueryRequestDTO statsQueryRequestDTO = testUtils.generateStatsQueryRequestDTO(Arrays.asList(1L,3L, 4L), StatType.MAX, false, true, true, true, true, "2023-05-10", "2023-06-07");
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<StatsQueryRequestDTO> requestEntity = new HttpEntity<>(statsQueryRequestDTO, headers);
+
+        final ResponseEntity<StatsQueryResponseDTO> response = restTemplate.postForEntity(
+                "/v1/weather/stats",
+                requestEntity,
+                StatsQueryResponseDTO.class
+        );
+
+        final StatsQueryResponseDTO statsQueryResponseDTO = response.getBody();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(statsQueryResponseDTO.metricResponses.size()).isEqualTo(4);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.HUMIDITY).metric).isEqualTo(MetricType.HUMIDITY);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.HUMIDITY).metricValue).isEqualTo(78.0);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.WINDSPEED).metric).isEqualTo(MetricType.WINDSPEED);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.WINDSPEED).metricValue).isEqualTo(38.0);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.TEMPERATURE).metric).isEqualTo(MetricType.TEMPERATURE);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.TEMPERATURE).metricValue).isEqualTo(48.0);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.RAINFALL).metric).isEqualTo(MetricType.RAINFALL);
+        assertThat(statsQueryResponseDTO.metricResponses.get(0).getMetricResponseDTOByType(statsQueryResponseDTO.metricResponses, MetricType.RAINFALL).metricValue).isEqualTo(43.0);
+    }
 
     @Test
     void updateSensorDataReading200Response(){

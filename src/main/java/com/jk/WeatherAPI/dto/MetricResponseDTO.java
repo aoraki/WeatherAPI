@@ -1,5 +1,7 @@
 package com.jk.WeatherAPI.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jk.WeatherAPI.dto.enums.MetricType;
 import com.jk.WeatherAPI.dto.enums.StatType;
 
@@ -10,7 +12,8 @@ public class MetricResponseDTO {
     public final StatType statType;
     public final Double metricValue;
 
-    public MetricResponseDTO(MetricType metric, StatType statType, Double metricValue) {
+    @JsonCreator
+    public MetricResponseDTO(@JsonProperty("metric") final MetricType metric, @JsonProperty("statType") final StatType statType, @JsonProperty("metricValue") Double metricValue) {
         this.metric = metric;
         this.statType = statType;
         this.metricValue = metricValue;
