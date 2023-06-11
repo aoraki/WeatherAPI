@@ -19,6 +19,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.5.12'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+	implementation 'org.apache.httpcomponents:httpclient:4.4.1'
 
 	runtimeOnly 'com.h2database:h2'
 
