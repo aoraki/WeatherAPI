@@ -436,7 +436,20 @@ SELECT * from SENSOR_DATA
 ```
 ### Optional Docker Support
 
-**NB!** This requires that you have Docker locally installed on your machine.   A docker file has been provided in the repo which outlines a virtualized runtime to run a Java 11 REST application, exposing the port 8080 to the outside world.  The Dockerfile is located in the root of the code repository.
+**NB!** This requires that you have Docker locally installed on your machine.
+
+This application has been pre-built as a docker image and uploaded to Dockhub to a public repository.  So you can pull down the image and run it as a container on your machine.
+
+To pull the WeatherAPI image run this command;
+```
+docker pull aoraki1973/weatherapi:latest
+``` 
+To run the WeatherAPI image as a container run the following command;
+```
+docker run -p 8080:8080 aoraki1973/weatherapi
+```
+
+Alternatively, you can build the image locally on your machine.  A docker file has been provided in the repo which outlines a virtualized runtime to run a Java 11 REST application, exposing the port 8080 to the outside world.  The Dockerfile is located in the root of the code repository.
 
 To build an image from the Dockerfile navigate to the root of the code repository and run the following command;
 ```
@@ -446,8 +459,7 @@ To run the newly built image as a container run the following command;
 ```
 docker run -p 8080:8080 weather-api
 ```
-You can send requests to http://localhost:8080 the same way you would if you were running the Jar file directly or running the WeatherAPI app directly from your IDE.
-
+When running the WeatherAPI in Docker, you can send requests to http://localhost:8080 the same way you would if you were running the Jar file directly or running the WeatherAPI app directly from your IDE.
 ### Continuous Integration
 The CI in CI/CD.  This repo is housed in Github so advantage can be taken of the built-in Github Actions capability of Github.  A simple workflow file has been provided in the repo at `.github/workflow/gradle-build.yml`.  This workflow will check-out the repo, set up a Java 11 environment and then run the gradle wrapper build command.  The build will also trigger the unit tests, generate a Jacoco test Coverage report and build a Jar file.
 
