@@ -453,7 +453,7 @@ The CI in CI/CD.  This repo is housed in Github so advantage can be taken of the
 
 ### Test Coverage
 More time was probably spent writing unit tests than the application code itself :).  I tried to focus on tests at the controller and service layer, as well as integration tests.  I have also provided a couple of basic tests at the JPA repository layer, mainly to demonstrate how you would write tests at that layer.  But definitely more tests need to be added.  At the time of writing there are
-80 separate tests with a line coverage of 96%.
+96 separate tests with a line coverage of 96%.
 
 The Jacoco plugin has been installed in the gradle build environment.  Each build of the project will run the unit tests and a HTML test coverage report will be generated at `build/jacoco/test/html/index.html`
 
