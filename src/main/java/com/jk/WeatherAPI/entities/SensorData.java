@@ -20,7 +20,7 @@ public class SensorData {
     private Double windspeed;
     private Double humidity;
 
-    public SensorData(Long sampleId, Long sensorId, Timestamp sampleTime, Double temperature, Double rainfall, Double windspeed, Double humidity) {
+    public SensorData(final Long sampleId, final Long sensorId, final Timestamp sampleTime, final Double temperature, final Double rainfall, final Double windspeed, final Double humidity) {
         this.sampleId = sampleId;
         this.sensorId = sensorId;
         this.sampleTime = sampleTime;
@@ -37,7 +37,7 @@ public class SensorData {
         return sampleId;
     }
 
-    public void setSampleId(Long sampleId) {
+    public void setSampleId(final Long sampleId) {
         this.sampleId = sampleId;
     }
 
@@ -45,7 +45,7 @@ public class SensorData {
         return sensorId;
     }
 
-    public void setSensorId(Long sensorId) {
+    public void setSensorId(final Long sensorId) {
         this.sensorId = sensorId;
     }
 
@@ -53,7 +53,7 @@ public class SensorData {
         return sampleTime;
     }
 
-    public void setSampleTime(Timestamp sampleTime) {
+    public void setSampleTime(final Timestamp sampleTime) {
         this.sampleTime = sampleTime;
     }
 
@@ -61,7 +61,7 @@ public class SensorData {
         return temperature;
     }
 
-    public void setTemperature(double temperature) {
+    public void setTemperature(final Double temperature) {
         this.temperature = temperature;
     }
 
@@ -69,7 +69,7 @@ public class SensorData {
         return rainfall;
     }
 
-    public void setRainfall(double rainfall) {
+    public void setRainfall(final Double rainfall) {
         this.rainfall = rainfall;
     }
 
@@ -77,7 +77,7 @@ public class SensorData {
         return windspeed;
     }
 
-    public void setWindspeed(double windspeed) {
+    public void setWindspeed(final Double windspeed) {
         this.windspeed = windspeed;
     }
 
@@ -85,7 +85,7 @@ public class SensorData {
         return humidity;
     }
 
-    public void setHumidity(double humidity) {
+    public void setHumidity(final Double humidity) {
         this.humidity = humidity;
     }
 }
