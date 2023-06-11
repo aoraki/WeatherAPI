@@ -38,7 +38,7 @@ public class MetricsServiceImpl implements MetricsService {
         if(validation.isObtainLatestMetrics(query)){
             metricResponses = getMetricResponseDTOS(query, validation.getSearchDateForToday(false), validation.getSearchDateForToday(true));
         } else {
-            if(validation.validateDates(query)){
+            if(validation.isValidDates(query)){
                 final Date startDate = validation.parseQueryDate(query.startDate, false);
                 final Date endDate = validation.parseQueryDate(query.endDate, true);
                 metricResponses = getMetricResponseDTOS(query, startDate, endDate);

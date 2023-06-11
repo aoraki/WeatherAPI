@@ -68,7 +68,7 @@ public class Validation {
         return calendar.getTime();
     }
 
-    public boolean validateDates(final StatsQueryRequestDTO query) {
+    public boolean isValidDates(final StatsQueryRequestDTO query) {
         dateFormat.setLenient(false);
 
         try {
