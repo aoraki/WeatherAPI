@@ -52,10 +52,19 @@ Once the WeatherAPI app is running there are a few different ways you can make r
 
 ### Design Decisions/Assumptions Made
 
-* The app was built to ingest data for 4 different weather metrics; Temperature, Windspeed, Rainfall and Humidity.  I just picked these 4 to work with.
+* The app was built to ingest data for 4 different weather metrics; Temperature, Windspeed, Rainfall and Humidity.  I just picked these 4 to work with.  These are enumerated in the API with the following values;
+  * TEMPERATURE
+  * WINDSPEED
+  * HUMIDITY
+  * RAINFALL
 * A sensor can submit data for any of the 4 metrics.  So a sensor could send a reading of temperature, windspeed, rainfall and humidity to the server in one request.  It does not have to send all 4 however.
 * Each submission of data to the server will come with a unique sampleId which is supplied by the sensor and is part of the data payload to the server.
-* When querying collected data, you specify the metrics you want to query (you can base your query for a single metric, or for all 4 of them), the statistic type you want to apply to the data (avg, min, max etc) and a data range.  You can also narrow your query to certain sensors, or you can query for all sensors.
+* When querying collected data, you specify the metrics you want to query (you can base your query for a single metric, a subset, or for all 4 of them).  You also have to apply a statistic type to apply to the metric.  There are 4 supported statistic types and they are enumerated in the API with the following values;
+  * MIN
+  * MAX
+  * AVG
+  * SUM
+* In your query you can also narrow your query to certain sensors, or you can query for all sensors.
 * If you don't provide a data range in the query request the server will use the current day as the date range (this constitutes the "latest data" stipulation in the assignment brief).
 * Although the spec didn't call for it, I provided CRUD endpoints for the records held in the sensor data DB.  The query endpoint allows you make nuanced queries against the data held in the DB, whereas the CRUD endpoints are just standard endpoints to allow you to manipulate the raw data held in the DB.
 
@@ -206,13 +215,14 @@ The following validation rules apply to the various fields of the query object;
 * **statType** : Must be present.  The statistic type should be one of the 4 enumerated statistic types (AVG, MIN, MAX, SUM).  If it's a junk value the API will return a 400.
 * **sensorIds** : Can be used to specify specific sensors to query data for.  If the sensor ids are junk values (eg. non numerical) the API will return with a 400 Bad Request.  If the sensorIds field is not provided, then the searchAllSensors flag must be provided (see below), otherwise a 400 bad request will ensue.
 * **searchAllSensors** : This flag can be provided (with a value set to true) to stipulate that you want to query data over all sensors. If both sensorIds and searchAllSensors is present in the payload, the searchAllSensors field will take precedence.
-* **startDate** and **endDate** : The format of both date fields is "**yyyy-MM-dd**".  Can be provided to specify a date range to perform the search across.  startDate must be before or on the same day as endDate.  endDate cannot be a date in the future.  If you provide either one of the fields you must provide the other, otherwise a 400 Bad Request will occur.  startDate and endDate is inclusive, eg. if you provide a startDate of 2023-06-01 and an endDate of 2023-06-10 the server will assume the following in the back end;
+* **startDate** and **endDate** : The format of both date fields is "**yyyy-MM-dd**".  Can be provided to specify a date range to perform the search across.  startDate must be before or on the same day as endDate.  endDate cannot be a date in the future.  If you provide either one of the fields you must provide the other, otherwise a 400 Bad Request will occur.  startDate and endDate is inclusive, the API will ensure the startDate is lower bounded and the endDate is upper bounded in terms of the hours/mins/seconds value of the date.
+
+eg. If you provide a startDate of "2023-06-01" and an endDate of "2023-06-10" the server will assume the following in the back end;
 ```
 startDate : 2023-06-01 00:00:00
 endDate : 2023-06-11 00:00:00   
 ```
-**Alternatively you can leave out both date fields, and if you do so the server will perform the query assuming that the data range is the current day.  This is probably the best way to test the API as when it starts up there won't be any historical data to work with.**
-
+Alternatively you can leave out both date fields, and if you do so the server will perform the query assuming that the data range is the current day.
 #### Sample Response
 ```
 POST http://localhost:8080/v1/weather/stats
